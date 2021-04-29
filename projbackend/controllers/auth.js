@@ -1,5 +1,7 @@
 const User = require("../models/user");
 const { validationResult } = require("express-validator");
+const jwt = require("jsonwebtoken");
+const fs = require("fs");
 
 exports.validatePassword = (password, { req }) => {
   console.log(req.body);
@@ -47,6 +49,52 @@ exports.signup = (req, res) => {
       });
     }
     res.json({ id: user._id, name: user.name, email: user.email });
+  });
+};
+
+exports.signin = (req, res) => {
+  // validationResult function checks whether
+  // any occurs or not and return an object
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(422).json(errors);
+  }
+  const { email, password } = req.body;
+
+  User.findOne({ email }).then((user) => {
+    if (!user) {
+      return res.status(404).json({ message: "Email not found" });
+    }
+
+    if (!user.authenticate(password)) {
+      return res.status(422).json({ message: "Email and password does not Match" });
+    }
+
+    // token with RSA SHA256 alogorithm
+    // ref : https://siddharthac6.medium.com/json-web-token-jwt-the-right-way-of-implementing-with-node-js-65b8915d550e
+    process.env.privateKEY = fs.readFileSync("./private.key", "utf8");
+    var signOptions = {
+      expiresIn: "12h",
+      algorithm: "RS256", // RSASSA [ "RS256", "RS384", "RS512" ]
+    };
+    const token = jwt.sign({ _id: user._id }, process.env.privateKEY, signOptions);
+
+    process.env.publicKEY = fs.readFileSync("./public.key", "utf8");
+    var verifyOptions = {
+      expiresIn: "12h",
+      algorithms: ["RS256"],
+    };
+    jwt.verify(token, process.env.publicKEY, verifyOptions, function (err, payload) {
+      console.log(`jwt verify error : ${err}`);
+      console.log(`jwt verify payload : ${JSON.stringify(payload)}`);
+    });
+
+    // set token in cookies which expires in 1hr in milliseconds
+    res.cookie("token", token, { expires: new Date(Date.now() + 60 * 60 * 1000) });
+
+    // returning response
+    const { _id, name, email, role } = user;
+    return res.json({ token, user: { _id, email, name, role } });
   });
 };
 
