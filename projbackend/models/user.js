@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 const crypto = require("crypto");
-const uuidv1 = require("uuid/v1");
+const { v1: uuidv1 } = require("uuid");
 
 var userSchema = new mongoose.Schema(
   {
@@ -25,7 +25,6 @@ var userSchema = new mongoose.Schema(
       type: String,
       trim: true,
     },
-    //TODO: Have to comeback here
     encry_password: {
       type: String,
       required: true,
@@ -54,7 +53,7 @@ userSchema
     return this._password;
   });
 
-userSchema.method = {
+userSchema.methods = {
   authenticate: function (plainPassword) {
     return this.securePassword(plainPassword) === this.encry_password;
   },
