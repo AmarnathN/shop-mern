@@ -7,6 +7,7 @@ const cookieParser = require("cookie-parser");
 const cors = require("cors");
 
 const authRoutes = require("./routes/auth");
+const userRoutes = require("./routes/user");
 
 require("custom-env").env(process.env.NODE_ENV);
 
@@ -22,6 +23,7 @@ app.use(cors());
 
 // Routes middleware
 app.use("/api", authRoutes);
+app.use("/api", userRoutes);
 
 //Starting the server
 const port = process.env.PORT || 8000;
