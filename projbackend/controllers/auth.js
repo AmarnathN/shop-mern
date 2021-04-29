@@ -1,6 +1,7 @@
 const User = require("../models/user");
 const { validationResult } = require("express-validator");
 const jwt = require("jsonwebtoken");
+const expressJwt = require("express-jwt");
 const fs = require("fs");
 
 exports.validatePassword = (password, { req }) => {
@@ -99,7 +100,31 @@ exports.signin = (req, res) => {
 };
 
 exports.signout = (req, res) => {
+  res.clearCookie("token");
   res.json({
-    message: "User signed out",
+    message: "User signed out succesfully",
   });
+};
+
+// Custom middle wares
+process.env.publicKEY = fs.readFileSync("./public.key", "utf8");
+exports.isSignedIn = expressJwt({
+  secret: process.env.publicKEY,
+  userProperty: "jwt_auth",
+  algorithms: ["RS256"],
+});
+
+exports.isAuthenticated = (req, res, next) => {
+  const checker = req.profile && req.jwt_auth && req.jwt_auth.id == req.profile._id;
+  if (!checker) {
+    return res.status(403).json({ error: "ACCESS DENIED" });
+  }
+  next();
+};
+
+exports.isAdmin = (req, res, next) => {
+  if (!req.profile.role == 0) {
+    return res.status(403).json("ACCESS DENIED, restricted to Admin only");
+  }
+  next();
 };
