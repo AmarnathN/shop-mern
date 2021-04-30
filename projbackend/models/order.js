@@ -14,7 +14,7 @@ const OrderItem = mongoose.model("OrderItem", orderItemSchema);
 
 var orderSchema = new mongoose.Schema(
   {
-    orderItems: [OrderItemSchema],
+    orderItems: [orderItemSchema],
     transactionId: {},
     amount: {
       type: Number,
