@@ -1,5 +1,8 @@
-const User = require("../models/user");
 const _ = require("lodash");
+
+const User = require("../models/user");
+const Order = require("../models/order");
+
 exports.getUserById = (req, res, next, id) => {
   User.findById(id).exec((err, user) => {
     if (err || !user) {
@@ -28,5 +31,29 @@ exports.getAllUsers = (req, res) => {
         return _.omit(user, ["salt", "encry_password"]);
       });
       res.json(filteredUsers);
+    });
+};
+
+exports.updateUser = (req, res) => {
+  User.findOneAndUpdate({ _id: req.profile._id }, { $set: req.body }, { new: true }, (err, user) => {
+    if (err) {
+      return res.status(400).json({ error: "unable to update user info" });
+    }
+    filteredUser = _.omit(user, ["salt", "encry_password"]);
+    res.json(filteredUser);
+  });
+};
+
+exports.userPurchaseList = (req, res) => {
+  Order.find({ user: req.profile._id })
+    .populate({ path: "user", select: "_id name email" })
+    .exec((err, orders) => {
+      if (!orders) {
+        return res.status(404).json({ message: " NO orders found for user" });
+      }
+      if (err) {
+        return res.status(404).json({ message: " Issue in fetching orders of user", error: err });
+      }
+      return res.json(order);
     });
 };
