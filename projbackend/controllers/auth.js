@@ -122,9 +122,10 @@ exports.isAuthenticated = (req, res, next) => {
   next();
 };
 
-exports.isAdmin = (req, res, next) => {
-  if (!req.profile.role == 0) {
-    return res.status(403).json("ACCESS DENIED, restricted to Admin only");
+exports.isAdmin = async (req, res, next) => {
+  user = await User.findOne({ _id: req.jwt_auth._id }).lean().exec();
+  if (!user || user.role == 0) {
+    return res.status(403).json({ message: "ACCESS DENIED, restricted to Admin only" });
   }
   next();
 };
