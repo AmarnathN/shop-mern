@@ -8,3 +8,7 @@ jspm_packages/
 # dotenv environment variables file
 .env
 .env.staging
+
+#public and private keys
+private.key
+public.key
