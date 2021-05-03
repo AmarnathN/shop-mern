@@ -1,11 +1,14 @@
 const express = require("express");
 const router = express.Router();
-const { check } = require("express-validator");
+const multer = require("multer");
 
 const { getProductById, createProduct, getAllProducts, getProduct } = require("../controllers/product");
-const { isSignedIn, isAdmin } = require("../controllers/auth");
+const { isSignedIn } = require("../controllers/auth");
 const { getUserById } = require("../controllers/user");
-const { productValidationRules, productValidate, validateCategory } = require("../validators/product");
+const { productValidationRules } = require("../validators/product");
+const { validateRules } = require("../validators/common");
+
+const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 8 * 1024 * 1024 } });
 
 // middleware
 router.param("userId", getUserById);
@@ -16,16 +19,7 @@ router.get("/product/:productId", isSignedIn, getProduct);
 
 router.get("/products", getAllProducts);
 
-router.post(
-  "/product/create",
-  [
-    check("name", "Name length should be min 3 characters").isLength({ min: 3 }),
-    check("price").exists().isDecimal().withMessage("Only Decimal value allowed"),
-    check("category").custom(validateCategory),
-    check("photo").notEmpty(),
-  ],
-  createProduct
-);
+router.post("/product/create", upload.single("image"), productValidationRules(), validateRules, createProduct);
 
 // router.put("/category/:categoryId", isSignedIn, isAdmin, updateCategory);
 

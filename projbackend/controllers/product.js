@@ -1,9 +1,5 @@
 const Product = require("../models/product");
-const formidable = require("formidable");
-const _ = require("lodash");
-const fs = require("fs");
-const { IncomingForm } = require("formidable");
-const { check, body, validationResult } = require("express-validator");
+const s3FileUpload = require("../services/fileUpload");
 
 const formOptions = {
   keepExtensions: true,
@@ -37,39 +33,35 @@ exports.getAllProducts = (req, res) => {
   });
 };
 
-exports.createProduct = (req, res) => {
-  const form = IncomingForm(formOptions);
-  form.parse(req, async (err, fields, file) => {
-    if (err) {
-      return res.status(400).json({ message: "Error Creating Product", error: err });
-    }
-
-    //Create Product
-    let product = await Product.create(fields, (err, product) => {
-      if (err) {
-        return res.status(400).json({ message: "Error Creating Product", error: err.message });
-      }
-      return product;
+exports.createProduct = async (req, res) => {
+  let file = await s3FileUpload(req, res)
+    .then((file) => {
+      return file;
+    })
+    .catch((err) => {
+      res.json({ message: "Error occured while trying to upload to S3 bucket", err });
     });
-
-    //Handle image file here
-    if (file.photo) {
-      if (file.photo.size > 3 * 1024 * 1024) {
-        return res.status(400).json({ message: "File Size should be below 3MB" });
-      }
-      product.photo.data = fs.readFileSync(file.photo.path);
-      product.photo.contentType = file.photo.type;
-
-      product.save((err, product) => {
-        if (err) {
-          return res.status(400).json({ message: "Error Saving Product Photo details", error: err });
-        }
-        res.json(product);
-      });
+  try {
+    if (file) {
+      const locationUrl = file.Location;
+      let newProduct = new Product({ ...req.body, image: locationUrl });
+      newProduct
+        .save()
+        .then((product) => {
+          res.json(product);
+        })
+        .catch((err) => {
+          res.status(422).json({ message: "Error occured while trying to save to DB", err: err.message });
+        });
     }
-  });
+  } catch (err) {
+    res.status(500).json({ message: "Error occured while trying to save to DB", err: err.message });
+  }
 };
 
 exports.getProduct = (req, res) => {
+  req.product.image = undefined;
   return res.json(req.product);
 };
+
+exports.getProduct;
