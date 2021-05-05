@@ -14,9 +14,14 @@ const productRoutes = require("./routes/product");
 require("custom-env").env(process.env.NODE_ENV);
 
 // DB Connection
-mongoose.connect(process.env.MONGO_DB_URL, { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true }).then(() => {
-  console.log("DB CONNECTED");
-});
+mongoose
+  .connect(process.env.MONGO_DB_URL, { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true })
+  .then(() => {
+    console.log("DB CONNECTED");
+  })
+  .catch((err) => {
+    console.log(err);
+  });
 
 // MIddlewares
 app.use(bodyParser.json());
