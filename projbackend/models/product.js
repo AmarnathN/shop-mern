@@ -1,7 +1,10 @@
 const mongoose = require("mongoose");
+const extendSchema = require("../helpers/extendSchema");
+const BaseSchema = require("./base");
 const { ObjectId } = mongoose.Schema;
 
-var productSchema = new mongoose.Schema(
+var productSchema = extendSchema(
+  BaseSchema,
   {
     name: {
       type: String,
