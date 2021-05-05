@@ -1,6 +1,7 @@
 const Product = require("../models/product");
 const { s3FileUpload, s3FileDelete } = require("../services/s3fileHandling.js");
-const { PRODUCT_IMAGES_PATH } = require("../constants/fileConstants");
+const { PRODUCT_IMAGES_PATH, DEFAULT_QUERY_PAGE_LIMIT } = require("../constants/projectConstants");
+const { sortBy } = require("lodash");
 
 const formOptions = {
   keepExtensions: true,
@@ -23,15 +24,20 @@ exports.getProductById = (req, res, next, id) => {
 };
 
 exports.getAllProducts = (req, res) => {
-  Product.find().exec((err, products) => {
-    if (err) {
-      return res.status(400).json({ message: "Error finding Products", error: err });
-    }
-    if (products.length == 0) {
-      return res.status(404).json({ message: "No Products found" });
-    }
-    res.json(products);
-  });
+  let limit = parseInt(req.query.limit) || DEFAULT_QUERY_PAGE_LIMIT;
+  let sortBy = req.query.sortBy || "updatedAt";
+  Product.find()
+    .sort([[sortBy, -1]])
+    .limit(limit)
+    .exec((err, products) => {
+      if (err) {
+        return res.status(400).json({ message: "Error finding Products", error: err });
+      }
+      if (products.length == 0) {
+        return res.status(404).json({ message: "No Products found" });
+      }
+      res.json(products);
+    });
 };
 
 exports.createProduct = async (req, res) => {

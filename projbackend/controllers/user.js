@@ -2,6 +2,7 @@ const _ = require("lodash");
 
 const User = require("../models/user");
 const Order = require("../models/order");
+const { DEFAULT_QUERY_PAGE_LIMIT } = require("../constants/projectConstants");
 
 exports.getUserById = (req, res, next, id) => {
   User.findById(id).exec((err, user) => {
@@ -21,7 +22,11 @@ exports.getUser = (req, res) => {
 };
 
 exports.getAllUsers = (req, res) => {
+  let limit = parseInt(req.query.limit) || DEFAULT_QUERY_PAGE_LIMIT;
+  let sortBy = req.query.sortBy || "updatedAt";
   User.find()
+    .sort([[sortBy, -1]])
+    .limit(limit)
     .lean() // this would return plain JS objects
     .exec((err, users) => {
       if (err || !users) {

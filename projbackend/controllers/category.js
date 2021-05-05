@@ -1,3 +1,4 @@
+const { DEFAULT_QUERY_PAGE_LIMIT } = require("../constants/projectConstants");
 const Category = require("../models/category");
 
 exports.getCategoryById = (req, res, next, id) => {
@@ -18,12 +19,17 @@ exports.getCategory = (req, res) => {
 };
 
 exports.getAllCategories = (req, res) => {
-  Category.find().exec((err, categories) => {
-    if (err || categories.length == 0) {
-      return res.status(404).json({ error: "No categories found" });
-    }
-    res.json(categories);
-  });
+  let limit = parseInt(req.query.limit) || DEFAULT_QUERY_PAGE_LIMIT;
+  let sortBy = req.query.sortBy || "updatedAt";
+  Category.find()
+    .sort([[sortBy, -1]])
+    .limit(limit)
+    .exec((err, categories) => {
+      if (err || categories.length == 0) {
+        return res.status(404).json({ error: "No categories found" });
+      }
+      res.json(categories);
+    });
 };
 
 exports.createCategory = (req, res) => {
