@@ -2,8 +2,8 @@ const express = require("express");
 const router = express.Router();
 const multer = require("multer");
 
-const { getProductById, createProduct, getAllProducts, getProduct } = require("../controllers/product");
-const { isSignedIn } = require("../controllers/auth");
+const { getProductById, createProduct, getAllProducts, getProduct, deleteProduct, updateProduct } = require("../controllers/product");
+const { isSignedIn, isAdmin } = require("../controllers/auth");
 const { getUserById } = require("../controllers/user");
 const { productValidationRules } = require("../validators/product");
 const { validateRules } = require("../validators/common");
@@ -21,8 +21,8 @@ router.get("/products", getAllProducts);
 
 router.post("/product/create", upload.single("image"), productValidationRules(), validateRules, createProduct);
 
-// router.put("/category/:categoryId", isSignedIn, isAdmin, updateCategory);
+router.put("/product/:productId", upload.single("image"), isSignedIn, isAdmin, updateProduct);
 
-// router.delete("/category/:categoryId", isSignedIn, isAdmin, deleteCategory);
+router.delete("/product/:productId", isSignedIn, isAdmin, deleteProduct);
 
 module.exports = router;
