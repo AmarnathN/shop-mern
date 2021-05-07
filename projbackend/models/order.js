@@ -19,6 +19,14 @@ var orderSchema = new mongoose.Schema(
     amount: {
       type: Number,
     },
+    status: {
+      type: String,
+      default: "RECEIVED",
+      enum: {
+        values: ["RECEIVED", "PROCESSING", "SHIPPED", "DELIVERED", "CANCELLED"],
+        message: "{VALUE} is not supported",
+      },
+    },
     address: String,
     updated: Date,
     user: {
@@ -28,6 +36,7 @@ var orderSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
 const Order = mongoose.model("Order", orderSchema);
 
 module.exports = { Order, OrderItem };
