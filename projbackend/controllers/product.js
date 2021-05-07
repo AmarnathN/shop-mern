@@ -126,4 +126,19 @@ exports.deleteProduct = (req, res) => {
   });
 };
 
-exports.getProduct;
+exports.updateStock = (req, res, next) => {
+  let myOperations = req.body.order.orderItems.map((product) => {
+    return {
+      updateOne: {
+        filter: { _id: product._id },
+        update: { $inc: { stock: -product.count, sold_units: +product.count } },
+      },
+    };
+  });
+  Product.bulkWrite(myOperations, {}, (err, products) => {
+    if (err) {
+      return res.status(400).json({ message: "Error in bulk writing the product", error: err });
+    }
+    next();
+  });
+};
