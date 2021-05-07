@@ -62,3 +62,24 @@ exports.userPurchaseList = (req, res) => {
       return res.json(order);
     });
 };
+
+exports.pushOrderInPurchaseList = (req, res, next) => {
+  let userPurchasesFromOrder = [];
+  req.body.order.orderItems.forEach((product) => {
+    userPurchasesFromOrder.push({
+      _id: product._id,
+      name: product.name,
+      category: product.category,
+      quantity: product.quantity,
+      price: product.price,
+      transactionId: req.body.order.transactionId,
+    });
+  });
+  // update purchases in document
+  User.findOneAndUpdate({ _id: req.jwt_auth._id }, { $push: { purchases: userPurchasesFromOrder } }, { new: true }, (err, user) => {
+    if (err) {
+      return res.status(500).json({ message: " Issue in updating purchases of user", error: err });
+    }
+    next();
+  });
+};
