@@ -8,7 +8,7 @@ const Base = ({ title = "My Title", description = "My Description", className = 
       <NavigationBar></NavigationBar>
       <div className="container-fluid">
         <div className="jumbotron bg-dark text-white text-center">
-          <h1 className="display-4">{title}</h1>
+          <h3 className="display-4">{title}</h3>
           <p className="lead">{description}</p>
         </div>
         <div className={className}>{children}</div>
