@@ -1,4 +1,4 @@
-const { API } = require("../../src/backend");
+const { API } = require("../../backend");
 
 export const signup = (user) => {
   return fetch(`${API}/signup`, {

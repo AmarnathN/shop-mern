@@ -9,6 +9,6 @@ exports.validateRules = (req, res, next) => {
   errors.array().map((err) => extractedErrors.push({ [err.param]: err.msg }));
 
   return res.status(422).json({
-    errors: extractedErrors,
+    error: extractedErrors,
   });
 };

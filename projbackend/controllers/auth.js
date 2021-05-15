@@ -20,11 +20,11 @@ exports.signin = (req, res) => {
 
   User.findOne({ email }).then((user) => {
     if (!user) {
-      return res.status(404).json({ message: "Email not found" });
+      return res.status(404).json({ error: "Email not found" });
     }
 
     if (!user.authenticate(password)) {
-      return res.status(422).json({ message: "Email and password does not Match" });
+      return res.status(422).json({ error: "Email and password does not Match" });
     }
 
     // token with RSA SHA256 alogorithm
