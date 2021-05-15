@@ -1,5 +1,6 @@
 import React from "react";
 import { Link, withRouter } from "react-router-dom";
+import { isAuthenticated, signout } from "../auth/helper";
 
 const currentTab = (history, path) => {
   return history.location.pathname === path ? { color: "#E8BD0D" } : { color: "#CAD5E2" };
@@ -29,21 +30,36 @@ const NavigationBar = ({ history }) => {
             Admin Dashboard
           </Link>
         </li>
-        <li className="nav-item">
-          <Link style={currentTab(history, "/signup")} className="nav-link" to="/signup">
-            Sign Up
-          </Link>
-        </li>
-        <li className="nav-item">
-          <Link style={currentTab(history, "/signin")} className="nav-link" to="/signin">
-            Sign In
-          </Link>
-        </li>
-        <li className="nav-item">
-          <Link style={currentTab(history, "/signout")} className="nav-link" to="/signout">
-            Sign Out
-          </Link>
-        </li>
+        {!isAuthenticated() && (
+          <React.Fragment>
+            <li className="nav-item">
+              <Link style={currentTab(history, "/signup")} className="nav-link" to="/signup">
+                Sign Up
+              </Link>
+            </li>
+
+            <li className="nav-item">
+              <Link style={currentTab(history, "/signin")} className="nav-link" to="/signin">
+                Sign In
+              </Link>
+            </li>
+          </React.Fragment>
+        )}
+        {isAuthenticated() && (
+          <li className="nav-item">
+            <span
+              className="nav-link"
+              style={currentTab(history, "/signin")}
+              onClick={() => {
+                signout(() => {
+                  history.push("/signin");
+                });
+              }}
+            >
+              Signout
+            </span>
+          </li>
+        )}
       </ul>
     </div>
   );
