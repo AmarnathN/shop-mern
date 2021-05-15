@@ -14,6 +14,41 @@ export const createCategory = (categoryName, token) => {
       return res.json();
     })
     .catch((err) => {
-      console.log("Error creating cateogry : " + err);
+      console.log("Error creating category : " + err);
+    });
+};
+
+export const getAllCategories = () => {
+  let ok = null;
+  return fetch(`${API}/categories`, {
+    method: "GET",
+    headers: {
+      Accept: "application/json",
+      "content-type": "application/json",
+    },
+  })
+    .then((response) => {
+      ok = response.ok;
+      return response.json();
+    })
+    .catch((err) => {
+      console.log("Error getting all categories : ");
+    });
+};
+
+export const deleteCategory = (categoryId, token) => {
+  return fetch(`${API}/category/${categoryId}`, {
+    method: "DELETE",
+    headers: {
+      Accept: "application/json",
+      "content-type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  })
+    .then((response) => {
+      return response.json();
+    })
+    .catch((err) => {
+      console.log("Error Deleting the categor ");
     });
 };
