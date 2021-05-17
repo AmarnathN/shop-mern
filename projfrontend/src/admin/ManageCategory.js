@@ -4,17 +4,27 @@ import { Link } from "react-router-dom";
 import { isAuthenticated } from "../auth/helper";
 import Base from "../core/Base";
 import { createCategory, deleteCategory, getAllCategories } from "./helper/adminApi";
+import { DataGrid } from "@material-ui/data-grid";
+import DeleteOutlinedIcon from "@material-ui/icons/DeleteOutlined";
+import Alert from "@material-ui/lab/Alert";
+import { Snackbar, Grid } from "@material-ui/core";
 
 const ManageCategory = () => {
   const [name, setName] = useState("");
   const [error, setError] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [allCategories, setAllCategories] = useState([]);
+  const [open, setOpen] = useState(false);
+
+  const handleClose = (event) => {
+    setIsSuccess(false);
+    setError("");
+  };
 
   const { user, token } = isAuthenticated();
 
   const fetchAllCategories = () => {
-    getAllCategories()
+    getAllCategories(25)
       .then((data) => setAllCategories(data))
       .catch((err) => {
         console.log("Error fetching all categories : " + err);
@@ -41,10 +51,16 @@ const ManageCategory = () => {
   const successMessage = () => {
     return (
       <div className="row">
-        <div className="alert alert-success" style={{ display: isSuccess ? "" : "none" }}>
-          {" "}
-          <p>Category Successfully {isSuccess}</p>
-        </div>
+        <Snackbar
+          open={isSuccess != false}
+          autoHideDuration={6000}
+          onClose={handleClose}
+          anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
+        >
+          <Alert onClose={handleClose} severity="success">
+            <p>Category has been successfully {isSuccess}</p>
+          </Alert>
+        </Snackbar>
       </div>
     );
   };
@@ -52,11 +68,16 @@ const ManageCategory = () => {
   const errorMessage = () => {
     return (
       <div className="row">
-        <div className="alert alert-danger" style={{ display: error ? "" : "none" }}>
-          {""}
-          <p>Failed to create category</p>
-          <p>{JSON.stringify(error)}</p>
-        </div>
+        <Snackbar
+          open={error != ""}
+          autoHideDuration={6000}
+          onClose={handleClose}
+          anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
+        >
+          <Alert onClose={handleClose} severity="error">
+            <p>{JSON.stringify(error)}</p>
+          </Alert>
+        </Snackbar>
       </div>
     );
   };
@@ -81,8 +102,7 @@ const ManageCategory = () => {
       });
   };
 
-  const OnDelete = (event) => {
-    let categoryId = event.target.value;
+  const OnDelete = (event, categoryId) => {
     event.preventDefault();
     setError("");
     setIsSuccess(false);
@@ -130,59 +150,45 @@ const ManageCategory = () => {
     );
   };
 
+  const columns = [
+    { field: "CategoryName", headerName: "Category name", width: 200 },
+    {
+      field: "action",
+      headerName: "",
+      renderCell: (params) => (
+        <strong>
+          <DeleteOutlinedIcon onClick={(e) => OnDelete(e, params.id)} />
+        </strong>
+      ),
+    },
+  ];
+
+  const rows = allCategories.map((category) => {
+    return { CategoryName: category.name, id: category._id };
+  });
+
   const categoriesTable = () => {
     return (
-      <div className="row bg-light text-center">
-        <table className="table table-striped table-hover caption-top">
-          <caption className="text-dark">
-            <h4>List of Categories (last 3)</h4>
-          </caption>
-          <thead>
-            <tr>
-              <th scope="col">S.No#</th>
-              <th scope="col">Name</th>
-              <th scope="col">Handle</th>
-            </tr>
-          </thead>
-          {allCategories.length > 0 && (
-            <tbody>
-              {allCategories.slice(0, 3).map((cateogry, index) => {
-                return (
-                  <tr>
-                    <td scope="row">{index + 1}</td>
-                    <td>{cateogry.name}</td>
-                    <td>
-                      <button onClick={OnDelete} className="btn btn-danger rounded" value={cateogry._id}>
-                        delete
-                      </button>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          )}
-          {allCategories.length == 0 && (
-            <tbody>
-              <tr>
-                <td colspan="3">
-                  <p> no Categories to show</p>
-                </td>
-              </tr>
-            </tbody>
-          )}
-        </table>
-      </div>
+      <Grid container spacing={2}>
+        <Grid item xs={12}>
+          <div style={{ height: 300 }}>
+            <DataGrid rows={rows} columns={columns} autoPageSize={true} />
+          </div>
+        </Grid>
+      </Grid>
     );
   };
 
   return (
-    <Base title="Manage Categories" description="Manage your catgories" className="container bg-secondary p-4">
-      <div className="row bg-light text-left">
-        <div className="col-md-8">{myCategoryForm()}</div>
+    <Base title="Manage Categories" description="Manage your catgories" className="container-fluid bg-secondary p-1">
+      <div className="container-fluid">
+        <div className="row bg-light text-left">
+          <div className="col-md-8">{myCategoryForm()}</div>
+          <div className="col-md-8">{categoriesTable()}</div>
+        </div>
+        {successMessage()}
+        {errorMessage()}
       </div>
-      {successMessage()}
-      {errorMessage()}
-      {categoriesTable()}
     </Base>
   );
 };
