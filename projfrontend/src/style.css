@@ -1,11 +1,20 @@
 .btn,
-.jumbotron,
-.nav :hover {
+.jumbotron {
   border-radius: 0px;
 }
 
 body {
   background: #363a44;
+}
+
+.main_header {
+  height: 10vh;
+}
+.main_body {
+  height: 80vh;
+}
+.main_footer {
+  height: 10vh;
 }
 
 .lead {
