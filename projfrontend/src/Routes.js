@@ -8,6 +8,7 @@ import UserDashboard from "./user/UserDashboard";
 import Signin from "./user/Signin";
 import Signup from "./user/SignUp";
 import ManageCategory from "./admin/ManageCategory";
+import CreateCategory from "./admin/CreateCategory";
 
 export default function Routes() {
   return (
@@ -18,7 +19,8 @@ export default function Routes() {
         <Route path="/signin" exact component={Signin}></Route>
         <AdminRoute path="/admin/dashboard" exact component={AdminDashboard}></AdminRoute>
         <PrivateRoute path="/user/dashboard" exact component={UserDashboard}></PrivateRoute>
-        <AdminRoute path="/admin/categories" exact component={ManageCategory}></AdminRoute>
+        <AdminRoute path="/admin/create/category" exact component={CreateCategory}></AdminRoute>
+        <AdminRoute path="/admin/manage/categories" exact component={ManageCategory}></AdminRoute>
       </Switch>
     </BrowserRouter>
   );

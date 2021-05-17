@@ -3,17 +3,18 @@ import { Link } from "react-router-dom";
 
 import { isAuthenticated } from "../auth/helper";
 import Base from "../core/Base";
-import { deleteCategory, getAllCategories } from "./helper/categoryApi";
+import { createCategory, deleteCategory, getAllCategories } from "./helper/categoryApi";
 import { DataGrid } from "@material-ui/data-grid";
 import DeleteOutlinedIcon from "@material-ui/icons/DeleteOutlined";
 import Alert from "@material-ui/lab/Alert";
 import { Snackbar, Grid } from "@material-ui/core";
 
-const ManageCategory = () => {
+const CreateCategory = () => {
   const [name, setName] = useState("");
   const [error, setError] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [allCategories, setAllCategories] = useState([]);
+  const [open, setOpen] = useState(false);
 
   const handleClose = (event) => {
     setIsSuccess(false);
@@ -40,6 +41,11 @@ const ManageCategory = () => {
         </Link>
       </div>
     );
+  };
+
+  const handleChange = (event) => {
+    setError("");
+    setName(event.target.value);
   };
 
   const successMessage = () => {
@@ -76,6 +82,26 @@ const ManageCategory = () => {
     );
   };
 
+  const onSubmit = (event) => {
+    event.preventDefault();
+    setError("");
+    setIsSuccess(false);
+
+    createCategory({ name }, token)
+      .then((data) => {
+        if (data.error) {
+          setError(data.error);
+        } else {
+          setError("");
+          setIsSuccess("Created");
+          setName("");
+        }
+      })
+      .catch((err) => {
+        console.log("Error creating cateogry : " + err);
+      });
+  };
+
   const OnDelete = (event, categoryId) => {
     event.preventDefault();
     setError("");
@@ -96,6 +122,33 @@ const ManageCategory = () => {
   };
 
   useEffect(fetchAllCategories, []);
+
+  const myCategoryForm = () => {
+    return (
+      <form>
+        <div className="md-3">
+          <label className="form-label">Category Name</label>
+          <input
+            type="text"
+            className="form-control"
+            onChange={handleChange}
+            value={name}
+            autoFocus
+            required
+            placeholder="Enter catefory name E.g:Shirts"
+          />
+        </div>
+        <div className="row">
+          <div className="col-lg-4">
+            <button type="submit" onClick={onSubmit} className="btn btn-primary rounded my-2">
+              Create Category
+            </button>
+          </div>
+          {goBack()}
+        </div>
+      </form>
+    );
+  };
 
   const columns = [
     { field: "CategoryName", headerName: "Category name", width: 200 },
@@ -127,10 +180,10 @@ const ManageCategory = () => {
   };
 
   return (
-    <Base title="Manage Categories" description="Manage your catgories" className="container-fluid bg-secondary p-1">
+    <Base title="Create Categories" description="Manage your catgories" className="container-fluid bg-secondary p-1">
       <div className="container-fluid">
         <div className="row bg-light text-left">
-          <div className="row">{goBack()}</div>
+          <div className="col-md-8">{myCategoryForm()}</div>
           <div className="col-md-8">{categoriesTable()}</div>
         </div>
         {successMessage()}
@@ -139,4 +192,4 @@ const ManageCategory = () => {
     </Base>
   );
 };
-export default ManageCategory;
+export default CreateCategory;
