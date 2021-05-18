@@ -1,7 +1,6 @@
 import { API } from "../../backend";
 
 export const createProduct = (token, product) => {
-  let products = getAllProducts();
   return fetch(`${API}/product/create`, {
     method: "POST",
     headers: {

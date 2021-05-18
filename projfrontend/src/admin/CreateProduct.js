@@ -43,7 +43,7 @@ const CreateProduct = () => {
   }, []);
 
   const handleChange = (valueName) => (event) => {
-    const value = valueName === "photo" ? event.target.file[0] : event.target.value;
+    const value = valueName === "image" ? event.target.files[0] : event.target.value;
     formData.set(valueName, value);
     setValues({ ...values, [valueName]: value });
   };
@@ -215,7 +215,7 @@ const CreateProduct = () => {
             Product Image
           </label>
           <div className="col-sm-8">
-            <input type="file" class="form-control-file" id="productImageInput" accpet="image" />
+            <input type="file" class="form-control-file" id="productImageInput" accpet="image" onChange={handleChange("image")} />
           </div>
         </div>
         <button type="submit" onClick={onSubmit} class="btn btn-primary rounded my-2">
