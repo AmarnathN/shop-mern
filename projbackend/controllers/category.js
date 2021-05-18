@@ -19,7 +19,7 @@ exports.getCategory = (req, res) => {
 };
 
 exports.getAllCategories = (req, res) => {
-  let limit = parseInt(req.query.limit) || DEFAULT_QUERY_PAGE_LIMIT;
+  let limit = req.query.limit == undefined ? DEFAULT_QUERY_PAGE_LIMIT : parseInt(req.query.limit);
   let sortBy = req.query.sortBy || "updatedAt";
   Category.find()
     .sort([[sortBy, -1]])

@@ -18,8 +18,7 @@ export const createCategory = (categoryName, token) => {
     });
 };
 
-export const getAllCategories = (limit = 10) => {
-  let ok = null;
+export const getAllCategories = (limit = 0) => {
   return fetch(`${API}/categories?limit=${limit}`, {
     method: "GET",
     headers: {
@@ -28,7 +27,6 @@ export const getAllCategories = (limit = 10) => {
     },
   })
     .then((response) => {
-      ok = response.ok;
       return response.json();
     })
     .catch((error) => {

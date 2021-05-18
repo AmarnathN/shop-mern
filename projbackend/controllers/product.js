@@ -24,9 +24,10 @@ exports.getProductById = (req, res, next, id) => {
 };
 
 exports.getAllProducts = (req, res) => {
-  let limit = parseInt(req.query.limit) || DEFAULT_QUERY_PAGE_LIMIT;
+  let limit = req.query.limit == undefined ? DEFAULT_QUERY_PAGE_LIMIT : parseInt(req.query.limit);
   let sortBy = req.query.sortBy || "updatedAt";
   Product.find()
+    .populate("category")
     .sort([[sortBy, -1]])
     .limit(limit)
     .exec((error, products) => {

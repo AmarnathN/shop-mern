@@ -16,7 +16,7 @@ export const createProduct = (token, product) => {
     });
 };
 
-export const getAllProducts = (limit = 10) => {
+export const getAllProducts = (limit = 0) => {
   return fetch(`${API}/products?limit=${limit}`, {
     method: "GET",
     headers: {
