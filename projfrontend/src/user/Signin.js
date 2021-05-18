@@ -31,8 +31,8 @@ const Signin = () => {
           });
         }
       })
-      .catch((err) => {
-        console.log("Error in Signin : " + err);
+      .catch((error) => {
+        console.log("Error in Signin : " + error);
       });
   };
 

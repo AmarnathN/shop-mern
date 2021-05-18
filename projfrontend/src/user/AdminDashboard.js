@@ -2,8 +2,6 @@ import React from "react";
 import { isAuthenticated } from "../auth/helper";
 import Base from "../core/Base";
 import { Link } from "react-router-dom";
-import "bootstrap/dist/css/bootstrap.min.css";
-import "bootstrap/dist/js/bootstrap.min.js";
 
 const AdminDashboard = () => {
   const { user } = isAuthenticated();
@@ -12,8 +10,8 @@ const AdminDashboard = () => {
     return (
       <div className="accordion" id="adminLeftAccordion">
         <div className="accordion-item">
-          <h2 className="accordion-header" id="headingOne">
-            <button className="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseCategories">
+          <h2 className="accordion-header" id="headingCategories">
+            <button className="accordion-button btn text-dark" type="button" data-bs-toggle="collapse" data-bs-target="#collapseCategories">
               Categories
             </button>
           </h2>
@@ -27,6 +25,27 @@ const AdminDashboard = () => {
               <li className="list-group-item">
                 <Link to="/admin/manage/categories" className="nav-link text-dark">
                   Manage Category
+                </Link>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div className="accordion-item">
+          <h2 className="accordion-header" id="headingProducts">
+            <button className="accordion-button btn text-dark" type="button" data-bs-toggle="collapse" data-bs-target="#collapseProducts">
+              Products
+            </button>
+          </h2>
+          <div id="collapseProducts" className="accordion-collapse collapse" data-bs-parent="#adminLeftAccordion">
+            <ul className="list-group">
+              <li className="list-group-item">
+                <Link to="/admin/create/product" className="nav-link text-dark">
+                  Create Product
+                </Link>
+              </li>
+              <li className="list-group-item">
+                <Link to="/admin/manage/products" className="nav-link text-dark">
+                  Manage Product
                 </Link>
               </li>
             </ul>
@@ -57,10 +76,10 @@ const AdminDashboard = () => {
   };
 
   return (
-    <Base title="Admin Dashboard Page" description="Manage your shop here" className="container bg-secondary bg-gradient p-4">
+    <Base title="Admin Dashboard Page" description="Manage your shop here" className=" bg-secondary bg-gradient p-2">
       <div className="row">
-        <div className="col-md-3 col-sm-12">{adminLeftPanel()}</div>
-        <div className="col-md-9 col-sm-12">{adminRightPanel()}</div>
+        <div className="col-lg-3 col-md-3 col-sm-12">{adminLeftPanel()}</div>
+        <div className="col-lg-9 col-md-9 col-sm-12">{adminRightPanel()}</div>
       </div>
     </Base>
   );
