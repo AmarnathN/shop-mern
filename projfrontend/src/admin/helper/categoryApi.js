@@ -13,8 +13,8 @@ export const createCategory = (categoryName, token) => {
     .then((res) => {
       return res.json();
     })
-    .catch((err) => {
-      console.log("Error creating category : " + err);
+    .catch((error) => {
+      console.log("Error creating category : " + error);
     });
 };
 
@@ -31,7 +31,7 @@ export const getAllCategories = (limit = 10) => {
       ok = response.ok;
       return response.json();
     })
-    .catch((err) => {
+    .catch((error) => {
       console.log("Error getting all categories : ");
     });
 };
@@ -48,7 +48,7 @@ export const deleteCategory = (categoryId, token) => {
     .then((response) => {
       return response.json();
     })
-    .catch((err) => {
+    .catch((error) => {
       console.log("Error Deleting the categor ");
     });
 };

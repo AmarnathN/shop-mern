@@ -8,6 +8,7 @@ import { DataGrid } from "@material-ui/data-grid";
 import DeleteOutlinedIcon from "@material-ui/icons/DeleteOutlined";
 import Alert from "@material-ui/lab/Alert";
 import { Snackbar, Grid } from "@material-ui/core";
+import { goBack } from "./helper/common";
 
 const ManageCategory = () => {
   const [name, setName] = useState("");
@@ -25,22 +26,12 @@ const ManageCategory = () => {
   const fetchAllCategories = () => {
     getAllCategories(25)
       .then((data) => setAllCategories(data))
-      .catch((err) => {
-        console.log("Error fetching all categories : " + err);
+      .catch((error) => {
+        console.log("Error fetching all categories : " + error);
       });
   };
 
   useEffect(fetchAllCategories, [isSuccess]);
-
-  const goBack = () => {
-    return (
-      <div className="col-lg-4">
-        <Link className="btn btn-secondary rounded my-2" to="/admin/dashboard">
-          Go To Dashboard
-        </Link>
-      </div>
-    );
-  };
 
   const successMessage = () => {
     return (
@@ -90,8 +81,8 @@ const ManageCategory = () => {
           setIsSuccess("Deleted");
         }
       })
-      .catch((err) => {
-        console.log("Error deleting cateogry : " + err);
+      .catch((error) => {
+        console.log("Error deleting cateogry : " + error);
       });
   };
 
@@ -116,7 +107,7 @@ const ManageCategory = () => {
 
   const categoriesTable = () => {
     return (
-      <Grid container spacing={2}>
+      <Grid spacing={2}>
         <Grid item xs={12}>
           <div style={{ height: 300 }}>
             <DataGrid rows={rows} columns={columns} autoPageSize={true} />
@@ -127,15 +118,13 @@ const ManageCategory = () => {
   };
 
   return (
-    <Base title="Manage Categories" description="Manage your catgories" className="container-fluid bg-secondary p-1">
-      <div className="container-fluid">
-        <div className="row bg-light text-left">
-          <div className="row">{goBack()}</div>
-          <div className="col-md-8">{categoriesTable()}</div>
-        </div>
-        {successMessage()}
-        {errorMessage()}
+    <Base title="Manage Categories" description="Manage your catgories" className="bg-secondary p-1">
+      <div className="row bg-light text-left">
+        <div className="row">{goBack()}</div>
+        <div className="col-md-8">{categoriesTable()}</div>
       </div>
+      {successMessage()}
+      {errorMessage()}
     </Base>
   );
 };

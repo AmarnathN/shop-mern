@@ -8,6 +8,7 @@ import { DataGrid } from "@material-ui/data-grid";
 import DeleteOutlinedIcon from "@material-ui/icons/DeleteOutlined";
 import Alert from "@material-ui/lab/Alert";
 import { Snackbar, Grid } from "@material-ui/core";
+import { goBack } from "./helper/common";
 
 const CreateCategory = () => {
   const [name, setName] = useState("");
@@ -26,22 +27,12 @@ const CreateCategory = () => {
   const fetchAllCategories = () => {
     getAllCategories(25)
       .then((data) => setAllCategories(data))
-      .catch((err) => {
-        console.log("Error fetching all categories : " + err);
+      .catch((error) => {
+        console.log("Error fetching all categories : " + error);
       });
   };
 
   useEffect(fetchAllCategories, [isSuccess]);
-
-  const goBack = () => {
-    return (
-      <div className="col-lg-4">
-        <Link className="btn btn-secondary rounded my-2" to="/admin/dashboard">
-          Go To Dashboard
-        </Link>
-      </div>
-    );
-  };
 
   const handleChange = (event) => {
     setError("");
@@ -97,8 +88,8 @@ const CreateCategory = () => {
           setName("");
         }
       })
-      .catch((err) => {
-        console.log("Error creating cateogry : " + err);
+      .catch((error) => {
+        console.log("Error creating cateogry : " + error);
       });
   };
 
@@ -116,8 +107,8 @@ const CreateCategory = () => {
           setIsSuccess("Deleted");
         }
       })
-      .catch((err) => {
-        console.log("Error deleting cateogry : " + err);
+      .catch((error) => {
+        console.log("Error deleting cateogry : " + error);
       });
   };
 
@@ -126,8 +117,8 @@ const CreateCategory = () => {
   const myCategoryForm = () => {
     return (
       <form>
-        <div className="md-3">
-          <label className="form-label">Category Name</label>
+        <div className="row-md-4">
+          <label className="form-label">Category Name :</label>
           <input
             type="text"
             className="form-control"
@@ -138,13 +129,12 @@ const CreateCategory = () => {
             placeholder="Enter catefory name E.g:Shirts"
           />
         </div>
-        <div className="row">
-          <div className="col-lg-4">
+        <div className="row-md-4">
+          <div className="col-md-4">
             <button type="submit" onClick={onSubmit} className="btn btn-primary rounded my-2">
               Create Category
             </button>
           </div>
-          {goBack()}
         </div>
       </form>
     );
@@ -169,7 +159,7 @@ const CreateCategory = () => {
 
   const categoriesTable = () => {
     return (
-      <Grid container spacing={2}>
+      <Grid spacing={2}>
         <Grid item xs={12}>
           <div style={{ height: 300 }}>
             <DataGrid rows={rows} columns={columns} autoPageSize={true} />
@@ -180,15 +170,14 @@ const CreateCategory = () => {
   };
 
   return (
-    <Base title="Create Categories" description="Manage your catgories" className="container-fluid bg-secondary p-1">
-      <div className="container-fluid">
-        <div className="row bg-light text-left">
-          <div className="col-md-8">{myCategoryForm()}</div>
-          <div className="col-md-8">{categoriesTable()}</div>
-        </div>
-        {successMessage()}
-        {errorMessage()}
+    <Base title="Create Categories" description="Create your catgories" className="bg-secondary">
+      <div className="row bg-light text-left">
+        <div>{goBack()}</div>
+        <div className="col-md-8">{myCategoryForm()}</div>
+        <div className="col-md-8">{categoriesTable()}</div>
       </div>
+      {successMessage()}
+      {errorMessage()}
     </Base>
   );
 };

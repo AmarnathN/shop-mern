@@ -12,8 +12,8 @@ export const signup = (user) => {
     .then((res) => {
       return res.json();
     })
-    .catch((err) => {
-      console.log(err);
+    .catch((error) => {
+      console.log(error);
     });
 };
 
@@ -29,8 +29,8 @@ export const signin = (user) => {
     .then((res) => {
       return res.json();
     })
-    .catch((err) => {
-      console.log(err);
+    .catch((error) => {
+      console.log(error);
     });
 };
 
@@ -51,8 +51,8 @@ export const signout = (next) => {
       .then(() => {
         console.log("Signout Success");
       })
-      .catch((err) => {
-        console.log(err);
+      .catch((error) => {
+        console.log(error);
       });
   }
 };
