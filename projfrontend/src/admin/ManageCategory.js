@@ -7,7 +7,7 @@ import { deleteCategory, getAllCategories } from "./helper/categoryApi";
 import { DataGrid } from "@material-ui/data-grid";
 import DeleteOutlinedIcon from "@material-ui/icons/DeleteOutlined";
 import Alert from "@material-ui/lab/Alert";
-import { Snackbar, Grid } from "@material-ui/core";
+import { Snackbar, Grid, Button } from "@material-ui/core";
 import { goBack } from "./helper/common";
 
 const ManageCategory = () => {
@@ -90,6 +90,18 @@ const ManageCategory = () => {
 
   const columns = [
     { field: "CategoryName", headerName: "Category name", width: 200 },
+    {
+      field: "actionUpdate",
+      headerName: "Update",
+      width: 200,
+      renderCell: (params) => (
+        <strong>
+          <Button variant="contained" href={`/admin/update/category/${params.id}`}>
+            Update
+          </Button>
+        </strong>
+      ),
+    },
     {
       field: "action",
       headerName: "",
