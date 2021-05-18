@@ -10,6 +10,8 @@ import Signup from "./user/SignUp";
 import ManageCategory from "./admin/ManageCategory";
 import CreateCategory from "./admin/CreateCategory";
 import CreateProduct from "./admin/CreateProduct";
+import ManageProduct from "./admin/ManageProduct";
+import UpdateProduct from "./admin/UpdateProduct";
 
 export default function Routes() {
   return (
@@ -23,6 +25,8 @@ export default function Routes() {
         <AdminRoute path="/admin/create/category" exact component={CreateCategory}></AdminRoute>
         <AdminRoute path="/admin/manage/categories" exact component={ManageCategory}></AdminRoute>
         <AdminRoute path="/admin/create/product" exact component={CreateProduct}></AdminRoute>
+        <AdminRoute path="/admin/manage/products" exact component={ManageProduct}></AdminRoute>
+        <AdminRoute path="/admin/update/product/:productId" exact component={UpdateProduct}></AdminRoute>
       </Switch>
     </BrowserRouter>
   );

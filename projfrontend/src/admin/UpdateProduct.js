@@ -3,12 +3,12 @@ import { isAuthenticated } from "../auth/helper";
 import Base from "../core/Base";
 import { getAllCategories } from "./helper/categoryApi";
 import { goBack } from "./helper/common";
-import { createProduct } from "./helper/productApi";
+import { getProduct, updateProduct } from "./helper/productApi";
 import Alert from "@material-ui/lab/Alert";
 import { Snackbar, CircularProgress } from "@material-ui/core";
 import { Redirect } from "react-router-dom";
 
-const CreateProduct = () => {
+const UpdateProduct = (props) => {
   const [values, setValues] = useState({
     name: "",
     description: "",
@@ -24,30 +24,40 @@ const CreateProduct = () => {
     getRedirect: false,
     formData: new FormData(),
   });
+
   const { user, token } = isAuthenticated();
 
-  const {
-    name,
-    description,
-    price,
-    stock,
-    sold_units,
-    image,
-    categories,
-    category,
-    loading,
-    error,
-    isSuccess,
-    getRedirect,
-    formData,
-  } = values;
+  const { name, description, price, stock, sold_units, categories, error, isSuccess, formData, loading, getRedirect } = values;
 
   const preLoad = () => {
+    let productId = props.match.params.productId;
+    getProduct(token, productId).then((data) => {
+      if (data.error) {
+        setValues({ ...values, error: data.error });
+      } else {
+        console.log(data);
+        setValues({
+          ...values,
+          name: data.name,
+          description: data.description,
+          price: data.price,
+          stock: data.stock,
+          sold_units: data.sold_units.toString(),
+          category: data.category,
+          loading: false,
+        });
+        preloadCategories();
+      }
+    });
+  };
+
+  const preloadCategories = () => {
     getAllCategories().then((data) => {
       if (data.error) {
         setValues({ ...values, error: data.error });
       } else {
-        setValues({ ...values, categories: data, loading: false });
+        console.log(data);
+        setValues({ categories: data, error: "", isSuccess: false, loading: false, formData: new FormData() });
       }
     });
   };
@@ -63,16 +73,10 @@ const CreateProduct = () => {
   };
 
   const handleClose = () => {
-    if (isSuccess == "created") {
+    if (isSuccess == "updated") {
       setValues({ ...values, error: "", isSuccess: false, getRedirect: true });
     } else {
       setValues({ ...values, error: "", isSuccess: false });
-    }
-  };
-
-  const performRedirect = () => {
-    if (getRedirect) {
-      return <Redirect to="/admin/manage/products" />;
     }
   };
 
@@ -110,108 +114,80 @@ const CreateProduct = () => {
     );
   };
 
-  const onSubmit = (event) => {
+  const onUpdateProduct = (event) => {
+    let productId = props.match.params.productId;
     event.preventDefault();
-    setValues({ ...values, error: "", loading: true });
+    setValues({ ...values, error: "", isSuccess: false, loading: true });
 
-    createProduct(token, formData).then((data) => {
+    updateProduct(token, productId, formData).then((data) => {
       if (data.error) {
-        setValues({ ...values, error: data.error });
+        setValues({ ...values, error: data.error, getRedirect: false });
       } else {
-        console.log(data);
         setValues({
           ...values,
-          name: "",
-          description: "",
-          price: 0,
-          stock: 0,
-          sold_units: 0,
-          image: "",
-          category: "",
           loading: false,
-          isSuccess: "created",
+          isSuccess: "updated",
         });
       }
     });
   };
+  const performRedirect = () => {
+    if (getRedirect) {
+      return <Redirect to="/admin/manage/products" />;
+    }
+  };
 
-  const createProductForm = () => {
+  const updateProductForm = () => {
     return (
       !loading &&
       !isSuccess && (
         <form>
-          <div class="form-group row my-2">
+          <div className="form-group row my-2">
             <label for="nameInput" className="col-sm-2">
               Name
             </label>
             <div className="col-sm-8">
-              <input
-                type="text"
-                class="form-control"
-                id="nameInput"
-                placeholder="Name"
-                onChange={handleChange("name")}
-                value={name}
-                autoFocus
-                required
-              />
+              <input type="text" className="form-control" id="nameInput" onChange={handleChange("name")} value={name} autoFocus required />
             </div>
           </div>
-          <div class="form-group row my-2">
+          <div className="form-group row my-2">
             <label for="productDescriptionInput" className="col-sm-2">
               Description
             </label>
             <div className="col-sm-8">
               <textarea
                 type="text"
-                class="form-control"
+                className="form-control"
                 id="productDescriptionInput"
-                placeholder="Description"
                 onChange={handleChange("description")}
                 value={description}
               />
             </div>
           </div>
-          <div class="form-group row my-2">
+          <div className="form-group row my-2">
             <label for="productPriceInput" className="col-sm-2">
               Price
             </label>
             <div className="col-sm-8">
-              <input
-                type="text"
-                class="form-control"
-                id="productPriceInput"
-                placeholder="Example : 11.2"
-                onChange={handleChange("price")}
-                value={price}
-                required
-              />
+              <input type="text" className="form-control" id="productPriceInput" onChange={handleChange("price")} value={price} required />
             </div>
           </div>
-          <div class="form-group row my-2">
+          <div className="form-group row my-2">
             <label for="productStockInput" className="col-sm-2">
               Stock
             </label>
             <div className="col-sm-8">
-              <input
-                type="text"
-                class="form-control"
-                id="productStockInput"
-                placeholder="Example input"
-                onChange={handleChange("stock")}
-                value={stock}
-                required
-              />
+              <input type="text" className="form-control" id="productStockInput" onChange={handleChange("stock")} value={stock} required />
             </div>
           </div>
-          <div class="form-group row my-2">
+          <div className="form-group row my-2">
             <label for="productSoldInput" className="col-sm-2">
               Sold
             </label>
             <div className="col-sm-8 my-2">
               <input
                 type="text"
-                class="form-control"
+                className="form-control"
                 id="productSoldInput"
                 placeholder="Example input"
                 onChange={handleChange("sold_units")}
@@ -219,13 +195,13 @@ const CreateProduct = () => {
               />
             </div>
           </div>
-          <div class="form-group row my-2">
+          <div className="form-group row my-2">
             <label for="productCategorySelect" className="col-sm-2">
               Category
             </label>
             <div className="col-sm-8">
-              <select class="form-control custom-select" id="productCategorySelect" onChange={handleChange("category")}>
-                <option>Select ...</option>
+              <select className="form-select" id="productCategorySelect" onChange={handleChange("category")}>
+                <option>Select to update</option>
                 {categories.map((categ, index) => {
                   return (
                     <option key={index} value={categ._id}>
@@ -236,16 +212,16 @@ const CreateProduct = () => {
               </select>
             </div>
           </div>
-          <div class="form-group row my-2">
+          <div className="form-group row my-2">
             <label for="productImageInput" className="col-sm-2">
-              Product Image
+              Update Product Image
             </label>
             <div className="col-sm-8">
-              <input type="file" class="form-control-file" id="productImageInput" accpet="image" onChange={handleChange("image")} />
+              <input type="file" className="form-control-file" id="productImageInput" accpet="image" onChange={handleChange("image")} />
             </div>
           </div>
-          <button type="submit" onClick={onSubmit} class="btn btn-primary rounded my-2">
-            Create Product
+          <button type="submit" onClick={onUpdateProduct} className="btn btn-primary rounded my-2">
+            Update Product
           </button>
         </form>
       )
@@ -253,10 +229,10 @@ const CreateProduct = () => {
   };
 
   return (
-    <Base title="Create Product" description="Create your product here" className="bg-secondary gx-2">
+    <Base title="Update Product" description="Update your product here" className="bg-secondary gx-2">
       <div className="row bg-light text-left">
         <div className="col-md-8">{goBack()}</div>
-        {createProductForm()}
+        {updateProductForm()}
         <div className="col-md-8">{loading && <CircularProgress />}</div>
       </div>
       {successMessage()}
@@ -266,4 +242,4 @@ const CreateProduct = () => {
   );
 };
 
-export default CreateProduct;
+export default UpdateProduct;

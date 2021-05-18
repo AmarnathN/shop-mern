@@ -51,10 +51,9 @@ export const updateProduct = (token, productId, productUpdate) => {
   return fetch(`${API}/product/${productId}`, {
     method: "PUT",
     headers: {
-      Accept: "application/json",
       Authorization: `Bearer ${token}`,
     },
-    body: JSON.stringify(productUpdate),
+    body: productUpdate,
   })
     .then((res) => {
       return res.json();
