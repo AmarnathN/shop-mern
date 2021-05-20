@@ -115,9 +115,16 @@ const ManageProduct = () => {
     },
   ];
 
-  const rows = products.map((product) => {
-    return { ProductName: product.name, id: product._id, CategoryName: `${product.category != undefined ? product.category.name : null}` };
-  });
+  const rows =
+    products.length > 0
+      ? products.map((product) => {
+          return {
+            ProductName: product.name,
+            id: product._id,
+            CategoryName: `${product.category != undefined ? product.category.name : null}`,
+          };
+        })
+      : [];
 
   const productsTable = () => {
     return (
