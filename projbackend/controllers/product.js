@@ -1,7 +1,6 @@
 const Product = require("../models/product");
-const { s3FileUpload, s3FileDelete } = require("../services/s3fileHandling.js");
+const { s3FileUpload, s3FileDelete, s3GetSignedUrl } = require("../services/s3fileHandling.js");
 const { PRODUCT_IMAGES_PATH, DEFAULT_QUERY_PAGE_LIMIT } = require("../constants/projectConstants");
-const { sortBy } = require("lodash");
 
 const formOptions = {
   keepExtensions: true,
@@ -11,12 +10,15 @@ const formOptions = {
 exports.getProductById = (req, res, next, id) => {
   Product.findById(id)
     .populate("category")
-    .exec((error, product) => {
+    .exec(async (error, product) => {
       if (error) {
         return res.status(400).json({ message: "Error finding the product ", error: error });
       }
       if (!product) {
         return res.status(404).json({ message: "No product found " });
+      }
+      if (product.image) {
+        product.image = await s3GetSignedUrl(product.image);
       }
       req.product = product;
       next();
@@ -30,12 +32,18 @@ exports.getAllProducts = (req, res) => {
     .populate("category")
     .sort([[sortBy, -1]])
     .limit(limit)
-    .exec((error, products) => {
+    .exec(async (error, products) => {
       if (error) {
         return res.status(400).json({ message: "Error finding Products", error: error });
       }
       if (products.length == 0) {
         return res.status(404).json({ message: "No Products found" });
+      }
+      for (let i = 0; i < products.length; i++) {
+        const product = products[i];
+        if (product.image) {
+          products[i].image = await s3GetSignedUrl(product.image);
+        }
       }
       res.json(products);
     });
@@ -54,11 +62,13 @@ exports.createProduct = async (req, res) => {
         });
       req.body.image = file.Location;
     }
-    console.log(req.body);
     let newProduct = new Product(req.body);
     newProduct
       .save()
-      .then((product) => {
+      .then(async (product) => {
+        if (product.image) {
+          product.image = await s3GetSignedUrl(product.image);
+        }
         res.json(product);
       })
       .catch((error) => {
@@ -97,7 +107,10 @@ exports.updateProduct = async (req, res) => {
     }
 
     Product.findOneAndUpdate({ _id: req.product._id }, { $set: req.body }, { useFindAndModify: false, new: true })
-      .then((product) => {
+      .then(async (product) => {
+        if (product.image) {
+          product.image = await s3GetSignedUrl(product.image);
+        }
         res.json(product);
       })
       .catch((error) => {
@@ -125,6 +138,7 @@ exports.deleteProduct = (req, res) => {
           res.json({ message: "Error occured while trying to delete product from S3 bucket", error });
         });
     }
+    res.json({ message: "Deleted the Product", product: req.product });
   });
 };
 

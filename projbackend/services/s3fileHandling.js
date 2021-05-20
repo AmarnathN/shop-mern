@@ -7,6 +7,7 @@ const setAwsConfig = () => {
     secretAccessKey: process.env.AWS_ACCESS_SECRET,
     accessKeyId: process.env.AWS_ACCESS_KEY,
     region: process.env.REGION,
+    signatureVersion: "v4",
   });
 };
 
@@ -21,6 +22,7 @@ const s3FileUpload = (req, res) => {
     Bucket: `${process.env.AWS_BUCKET_NAME}`,
     Key: key,
     Body: req.file.buffer,
+    Expires: 100,
   };
 
   return getS3Object()
@@ -32,6 +34,25 @@ const s3FileUpload = (req, res) => {
     .catch((err) => {
       return Promise.reject(err);
     });
+};
+
+const s3GetSignedUrl = async (fileName) => {
+  const splitByString = ".amazonaws.com/";
+  try {
+    return new Promise((resolve, reject) => {
+      let uploadedFileName = fileName.split(splitByString)[1];
+      const params = {
+        Bucket: `${process.env.AWS_BUCKET_NAME}`,
+        Key: uploadedFileName,
+        Expires: Number.parseInt(process.env.SIGNED_URL_TIMEOUT),
+      };
+      getS3Object().getSignedUrl("getObject", params, (err, url) => {
+        resolve(url);
+      });
+    });
+  } catch (err) {
+    return Promise.reject(err.message);
+  }
 };
 
 const s3FileDelete = (req, res) => {
@@ -57,4 +78,4 @@ const s3FileDelete = (req, res) => {
     return Promise.reject(err.message);
   }
 };
-module.exports = { s3FileUpload, s3FileDelete };
+module.exports = { s3FileUpload, s3FileDelete, s3GetSignedUrl };
