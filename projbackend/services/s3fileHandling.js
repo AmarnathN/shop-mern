@@ -23,6 +23,7 @@ const s3FileUpload = (req, res) => {
     Key: key,
     Body: req.file.buffer,
     Expires: 100,
+    ACL: "public-read",
   };
 
   return getS3Object()
@@ -47,6 +48,9 @@ const s3GetSignedUrl = async (fileName) => {
         Expires: Number.parseInt(process.env.SIGNED_URL_TIMEOUT),
       };
       getS3Object().getSignedUrl("getObject", params, (err, url) => {
+        if (err) {
+          reject(err);
+        }
         resolve(url);
       });
     });
