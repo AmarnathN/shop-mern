@@ -3,7 +3,7 @@ const extendSchema = require("../helpers/extendSchema");
 const BaseSchema = require("./base");
 const { ObjectId } = mongoose.Schema;
 
-var cartSchema = extendSchema(
+var cartItemSchema = extendSchema(
   BaseSchema,
   {
     product: {
@@ -25,4 +25,4 @@ var cartSchema = extendSchema(
   { timestamps: true }
 );
 
-module.exports = mongoose.model("Cart", cartSchema);
+module.exports = mongoose.model("CartItem", cartItemSchema);
