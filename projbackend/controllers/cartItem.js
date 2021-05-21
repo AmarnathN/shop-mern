@@ -69,3 +69,12 @@ exports.deleteCartItem = (req, res) => {
     res.json({ message: "Deleted the Cart Item" });
   });
 };
+
+exports.emptyUserCartItems = (req, res) => {
+  CartItem.deleteMany({ user: req.jwt_auth._id }, (err, cartItem) => {
+    if (err) {
+      return res.status(400).json({ message: "Error deleting cart items of users", error: err });
+    }
+    res.json({ message: "Deleted All the Cart Items of User" });
+  });
+};

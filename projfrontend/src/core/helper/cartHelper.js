@@ -1,6 +1,6 @@
 import { API } from "../../backend";
 
-export const modifyItemInCart = (item, user, token) => {
+export const modifyItemInCart = (product, user, token) => {
   let cart = {};
   if (typeof window !== undefined) {
     if (!localStorage.getItem("jwt")) {
@@ -15,9 +15,9 @@ export const modifyItemInCart = (item, user, token) => {
         Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({
-        product: item._id,
+        product: product._id,
         user: user._id,
-        quantity: item.count,
+        quantity: product.count,
       }),
     })
       .then((res) => {
@@ -40,11 +40,10 @@ export const loadCart = (token) => {
     },
   })
     .then((res) => {
-      console.log(res.json);
       return res.json();
     })
     .catch((error) => {
-      console.log("Error modify Item  : " + error);
+      console.log("Error Loading user cart Items  : " + error);
     });
 };
 
@@ -61,6 +60,23 @@ export const deleteCartItem = (cartItemId, token) => {
       return res.json();
     })
     .catch((error) => {
-      console.log("Error modify Item  : " + error);
+      console.log("Error deleting Cart Item  : " + error);
+    });
+};
+
+export const emptyUserCart = (token) => {
+  return fetch(`${API}/user/cartItems`, {
+    method: "DELETE",
+    headers: {
+      Accept: "application/json",
+      "content-type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  })
+    .then((res) => {
+      return res.json();
+    })
+    .catch((error) => {
+      console.log("Error to Empty user cart Items  : " + error);
     });
 };
