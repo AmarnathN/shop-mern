@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import BaseFooter from "./BaseFooter";
 import NavigationBar from "./NavigationBar";
+import "../style.css";
 
 const Base = ({ title = "My Title", description = "My Description", className = "bg-dark text-white p-2", children }) => {
   return (

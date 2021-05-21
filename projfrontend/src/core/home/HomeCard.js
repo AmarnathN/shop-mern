@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Redirect } from "react-router-dom";
 
 import Card from "@material-ui/core/Card";
@@ -8,17 +8,24 @@ import CardContent from "@material-ui/core/CardContent";
 import CardActions from "@material-ui/core/CardActions";
 import Typography from "@material-ui/core/Typography";
 
-import { ExpandMore as ExpandMoreIcon, Add as AddIcon, Remove as RemoveIcon, Navigation as NavigationIcon } from "@material-ui/icons";
+import {
+  Add as AddIcon,
+  Remove as RemoveIcon,
+  Navigation as NavigationIcon,
+  ArrowDropDownCircle as ArrowDropDownCircleIcon,
+} from "@material-ui/icons";
 import { makeStyles } from "@material-ui/core/styles";
 import clsx from "clsx";
 
-import { Button, Collapse, Avatar, CardActionArea, Paper, Grid, Box, IconButton, Fab } from "@material-ui/core";
-import { addItemToCart } from "./helper/cartHelper";
+import { Button, Collapse, Avatar, Snackbar, Paper, Grid, Box, IconButton, Fab } from "@material-ui/core";
+import Alert from "@material-ui/lab/Alert";
+
+import { modifyItemInCart, loadCart } from "../helper/cartHelper";
+import { isAuthenticated } from "../../auth/helper";
 
 const useStyles = makeStyles((theme) => ({
   expand: {
     transform: "rotate(0deg)",
-    marginLeft: "auto",
     transition: theme.transitions.create("transform", {
       duration: theme.transitions.duration.shortest,
     }),
@@ -28,44 +35,84 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const MyCard = ({ product, addToCart = true, removeFromCart = false }) => {
+const HomeCard = ({ product, quantity = 0, addToCart = true, removeFromCart = false }) => {
   const classes = useStyles();
   const [expanded, setExpanded] = useState(false);
   const [redirect, setRedirect] = useState(false);
-  const [countOfItemsToCart, setCountOfItemsToCart] = useState(0);
+  const [countOfItemsToCart, setCountOfItemsToCart] = useState(quantity);
   const [addDisabled, setAddDisabled] = useState(false);
   const [removeDisabled, setRemoveDisabled] = useState(true);
+  const [alertToLogin, setAlertToLogin] = useState(false);
+  const [error, setError] = useState("");
 
-  const getRedirect = (redirect) => {
-    if (redirect) {
-      return <Redirect to="/cart"></Redirect>;
+  const { user, token } = isAuthenticated();
+
+  const preLoad = () => {
+    setRemoveDisabled(countOfItemsToCart <= 0);
+  };
+
+  useEffect(() => {
+    preLoad();
+  }, []);
+
+  // const getRedirect = (redirect) => {
+  //   if (redirect) {
+  //     return <Redirect to="/cart"></Redirect>;
+  //   }
+  // };
+
+  const handleClose = () => {
+    setError("");
+    setAlertToLogin(false);
+  };
+
+  const errorMessage = () => {
+    return (
+      <div className="row">
+        <Snackbar
+          open={error != ""}
+          autoHideDuration={6000}
+          onClose={handleClose}
+          anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
+        >
+          <Alert onClose={handleClose} severity="error">
+            <p>{JSON.stringify(error)}</p>
+          </Alert>
+        </Snackbar>
+      </div>
+    );
+  };
+
+  const handleAddItemToCart = async (count) => {
+    product.count = count;
+    let response = await modifyItemInCart(product, user, token);
+    if (response.error) {
+      setError(response.error);
+      setAlertToLogin(true);
+    } else {
+      setRedirect(true);
     }
   };
-  const handleAddItemToCart = () => {
-    // product.count = countOfItemsToCart;
-    addItemToCart(product, () => {
-      setRedirect(true);
-    });
-  };
+
   const handleExpandClick = () => {
     setExpanded(!expanded);
   };
 
-  const showAddToCart = () => {
-    return (
-      <Button variant="contained" color="primary" onClick={handleAddItemToCart} disabled={removeDisabled}>
-        Add To Cart
-      </Button>
-    );
-  };
+  // const showAddToCart = () => {
+  //   return (
+  //     <Button variant="contained" color="primary" onClick={handleAddItemToCart} disabled={removeDisabled}>
+  //       Add To Cart
+  //     </Button>
+  //   );
+  // };
 
-  const showRemoveFromCart = () => {
-    return (
-      <Button variant="contained" color="secondary">
-        Remove From Cart
-      </Button>
-    );
-  };
+  // const showRemoveFromCart = () => {
+  //   return (
+  //     <Button variant="contained" color="secondary" disabled={removeDisabled}>
+  //       Remove From Cart
+  //     </Button>
+  //   );
+  // };
 
   const handleChangeCountOfItemsToCart = (event, diff) => {
     event.preventDefault();
@@ -73,6 +120,7 @@ const MyCard = ({ product, addToCart = true, removeFromCart = false }) => {
 
     if (count >= 0) {
       setCountOfItemsToCart(count);
+      handleAddItemToCart(diff);
     }
 
     setAddDisabled(count === product.stock ? true : false);
@@ -107,16 +155,17 @@ const MyCard = ({ product, addToCart = true, removeFromCart = false }) => {
       </Box>
       <Paper elevation={5} bgcolor="primary">
         <CardMedia style={{ height: 0, paddingTop: "56.25%" }} image={product.image} title={product.name} />
-
-        <IconButton
-          className={clsx(classes.expand, {
-            [classes.expandOpen]: expanded,
-          })}
-          onClick={handleExpandClick}
-          aria-expanded={expanded}
-          aria-label="Description"
-        >
-          <ExpandMoreIcon />
+        <IconButton>
+          <ArrowDropDownCircleIcon
+            className={clsx(classes.expand, {
+              [classes.expandOpen]: expanded,
+            })}
+            onClick={handleExpandClick}
+            aria-expanded={expanded}
+            aria-label="Description"
+            color={"secondary"}
+            fontSize="large"
+          />
         </IconButton>
         <Collapse in={expanded} timeout="auto" unmountOnExit>
           <CardContent>
@@ -125,7 +174,7 @@ const MyCard = ({ product, addToCart = true, removeFromCart = false }) => {
         </Collapse>
       </Paper>
       <CardContent>
-        {getRedirect(redirect)}
+        {alertToLogin && errorMessage()}
         <Grid container>
           <Grid item xs={6} sm={6}>
             <Box p={1} textAlign="center" bgcolor="text.secondary">
@@ -163,14 +212,14 @@ const MyCard = ({ product, addToCart = true, removeFromCart = false }) => {
       <Grid container>
         <Grid item xs={12} sm={12} lg={12}>
           <CardActions style={{ justifyContent: "left" }}>{numberOfItemsToCart()}</CardActions>
-          <CardActions style={{ justifyContent: "center" }}>
+          {/* <CardActions style={{ justifyContent: "center" }}>
             {addToCart && showAddToCart()}
             {removeFromCart && showRemoveFromCart()}
-          </CardActions>
+          </CardActions> */}
         </Grid>
       </Grid>
     </Card>
   );
 };
 
-export default MyCard;
+export default HomeCard;
