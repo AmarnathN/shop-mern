@@ -23,11 +23,13 @@ const NavigationBar = ({ history }) => {
               Home
             </Link>
           </li>
-          <li className="nav-item">
-            <Link style={currentTab(history, "/cart")} className="nav-link" to="/cart">
-              Cart
-            </Link>
-          </li>
+          {isAuthenticated() && (
+            <li className="nav-item">
+              <Link style={currentTab(history, "/cart")} className="nav-link" to="/cart">
+                Cart
+              </Link>
+            </li>
+          )}
           {isAuthenticated() && isAuthenticated().user.role != 1 && (
             <li className="nav-item">
               <Link style={currentTab(history, "/user/dashboard")} className="nav-link" to="/user/dashboard">
