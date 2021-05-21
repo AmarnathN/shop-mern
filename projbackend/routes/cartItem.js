@@ -11,7 +11,7 @@ router.get("/cartItem/:cartItemId", isSignedIn, getCartItem);
 
 router.get("/cartItems", isSignedIn, getAllCartItems);
 
-router.post("/cartItem/modifyItem", isSignedIn, modifyCartItem);
+router.post("/cartItem/modify", isSignedIn, modifyCartItem);
 
 router.delete("/cartItem/:cartItemId", isSignedIn, deleteCartItem);
 

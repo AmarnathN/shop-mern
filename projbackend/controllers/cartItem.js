@@ -30,7 +30,7 @@ exports.getAllCartItems = async (req, res) => {
     .sort([[sortBy, -1]])
     .limit(limit)
     .exec((err, cartItems) => {
-      if (err || cartItems.length == 0) {
+      if (err) {
         return res.status(404).json({ error: "No cart Items found" });
       }
       return res.json(cartItems);
