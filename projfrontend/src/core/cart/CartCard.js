@@ -21,7 +21,7 @@ import clsx from "clsx";
 import { Button, Collapse, Avatar, Snackbar, Paper, Grid, Box, IconButton, Fab } from "@material-ui/core";
 import Alert from "@material-ui/lab/Alert";
 
-import { modifyItemInCart, loadCart } from "../helper/cartHelper";
+import { modifyItemInCart, loadCart, deleteCartItem } from "../helper/cartHelper";
 import { isAuthenticated } from "../../auth/helper";
 
 const useStyles = makeStyles((theme) => ({
@@ -37,17 +37,18 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const CartCard = ({ product, quantity = 0 }) => {
+const CartCard = (props) => {
   const classes = useStyles();
   const [expanded, setExpanded] = useState(false);
   const [redirect, setRedirect] = useState(false);
-  const [countOfItemsToCart, setCountOfItemsToCart] = useState(quantity);
+  const [countOfItemsToCart, setCountOfItemsToCart] = useState(props.item.quantity);
   const [addDisabled, setAddDisabled] = useState(false);
   const [removeDisabled, setRemoveDisabled] = useState(true);
   const [alertToLogin, setAlertToLogin] = useState(false);
   const [error, setError] = useState("");
 
   const { user, token } = isAuthenticated();
+  const product = props.item.product;
 
   const preLoad = () => {
     setRemoveDisabled(countOfItemsToCart <= 0);
@@ -56,12 +57,6 @@ const CartCard = ({ product, quantity = 0 }) => {
   useEffect(() => {
     preLoad();
   }, []);
-
-  // const getRedirect = (redirect) => {
-  //   if (redirect) {
-  //     return <Redirect to="/cart"></Redirect>;
-  //   }
-  // };
 
   const handleClose = () => {
     setError("");
@@ -100,21 +95,14 @@ const CartCard = ({ product, quantity = 0 }) => {
     setExpanded(!expanded);
   };
 
-  // const showAddToCart = () => {
-  //   return (
-  //     <Button variant="contained" color="primary" onClick={handleAddItemToCart} disabled={removeDisabled}>
-  //       Add To Cart
-  //     </Button>
-  //   );
-  // };
-
-  // const showRemoveFromCart = () => {
-  //   return (
-  //     <Button variant="contained" color="secondary" disabled={removeDisabled}>
-  //       Remove From Cart
-  //     </Button>
-  //   );
-  // };
+  const removeFromCart = async () => {
+    let response = await deleteCartItem(props.item._id, token);
+    if (response.error) {
+      setError(response.error);
+    } else {
+      props.refreshCart();
+    }
+  };
 
   const handleChangeCountOfItemsToCart = (event, diff) => {
     event.preventDefault();
@@ -154,20 +142,6 @@ const CartCard = ({ product, quantity = 0 }) => {
       <Paper elevation={5} bgcolor="primary">
         <CardMedia style={{ height: 0, paddingTop: "56.25%" }} image={product.image} title={product.name} />
         <Grid container justify="space-between">
-          {/* <Button
-            variant="contained"
-            color="primary"
-            onClick={handleExpandClick}
-            startIcon={
-              <ExpandMoreIcon
-                className={clsx(classes.expand, {
-                  [classes.expandOpen]: expanded,
-                })}
-              />
-            }
-          >
-            Details
-          </Button> */}
           <IconButton>
             <ArrowDropDownCircleIcon
               className={clsx(classes.expand, {
@@ -181,7 +155,7 @@ const CartCard = ({ product, quantity = 0 }) => {
             />
           </IconButton>
 
-          <Button variant="contained" color="secondary" className={classes.button} startIcon={<DeleteIcon />}>
+          <Button variant="contained" color="secondary" startIcon={<DeleteIcon />} onClick={removeFromCart}>
             Delete
           </Button>
         </Grid>

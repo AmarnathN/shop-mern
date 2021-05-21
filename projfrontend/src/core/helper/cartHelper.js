@@ -7,7 +7,7 @@ export const modifyItemInCart = (item, user, token) => {
       console.log("Need to login");
       return { error: "Please Login to add items to cart" };
     }
-    return fetch(`${API}/cart/modifyItem`, {
+    return fetch(`${API}/cartItem/modify`, {
       method: "POST",
       headers: {
         Accept: "application/json",
@@ -33,6 +33,24 @@ export const modifyItemInCart = (item, user, token) => {
 export const loadCart = (token) => {
   return fetch(`${API}/cartItems`, {
     method: "GET",
+    headers: {
+      Accept: "application/json",
+      "content-type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  })
+    .then((res) => {
+      console.log(res.json);
+      return res.json();
+    })
+    .catch((error) => {
+      console.log("Error modify Item  : " + error);
+    });
+};
+
+export const deleteCartItem = (cartItemId, token) => {
+  return fetch(`${API}/cartItem/${cartItemId}`, {
+    method: "DELETE",
     headers: {
       Accept: "application/json",
       "content-type": "application/json",

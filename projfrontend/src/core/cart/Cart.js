@@ -14,17 +14,18 @@ const Cart = () => {
     isSuccess: false,
     loading: true,
   });
-  const { loading, products } = values;
+  const { loading, products, isSuccess } = values;
 
   const { user, token } = isAuthenticated();
   const preLoad = () => {
+    setValues({ ...values, loading: true });
     loadCart(token).then((data) => {
       if (data.error) {
         setValues({ ...values, error: data.error });
       }
-      data = data.filter((item) => item.product && item.user);
 
-      setValues({ ...values, cartItems: data, loading: false });
+      data = data.filter((item) => item.product && item.user);
+      setValues({ ...values, cartItems: data, isSuccess: true, loading: false });
     });
   };
 
@@ -35,24 +36,36 @@ const Cart = () => {
   const loadCheckOut = () => {
     return <Button variant="contained">Checkout</Button>;
   };
+  const handleRefreshCart = () => {
+    preLoad();
+  };
+
   return (
     <Base title="Cart Page" description="Checkout the items">
-      <div className="row" style={{ justifyContent: "center", padding: 4 }}>
-        {loadCheckOut()}
-      </div>
       {loading && ProgressBar()}
-      {!loading && (
-        <div className="row bg-gradient">
-          {values.cartItems &&
-            values.cartItems.map((item) => {
+      <div>
+        {values.cartItems.length > 0 && (
+          <div className="row bg-gradient">
+            <div className="row" style={{ justifyContent: "center", padding: 4 }}>
+              {loadCheckOut()}
+            </div>
+            {values.cartItems.map((item) => {
               return (
                 <div className="col-lg-4 col-md-6 col-sm-6 gy-4">
-                  <CartCard product={item.product} quantity={item.quantity} addToCart={false} removeFromCart={true}></CartCard>
+                  <CartCard item={item} refreshCart={handleRefreshCart}></CartCard>
                 </div>
               );
             })}
-        </div>
-      )}
+          </div>
+        )}
+        {isSuccess && values.cartItems.length == 0 && (
+          <div className="row" style={{ justifyContent: "center", padding: 2 }}>
+            <div className="col-md-12 bg-danger bg-gradient text-center">
+              <p>Cart is empty</p>
+            </div>
+          </div>
+        )}
+      </div>
     </Base>
   );
 };

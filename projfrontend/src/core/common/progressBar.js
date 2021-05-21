@@ -3,9 +3,10 @@ import { LinearProgress } from "@material-ui/core";
 
 const ProgressBar = () => {
   return (
-    <div className="row bg-secondary bg-gradient" style={{ justifyContent: "center", padding: 50 }}>
+    <div className="row bg-secondary bg-gradient" style={{ justifyContent: "center" }}>
       <LinearProgress color="primary" />
-      <LinearProgress color="seconadry" />
+      <LinearProgress color="default" />
+      <LinearProgress color="secondary" />
     </div>
   );
 };
