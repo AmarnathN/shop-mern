@@ -12,6 +12,7 @@ const categoryRoutes = require("./routes/category");
 const productRoutes = require("./routes/product");
 const orderRoutes = require("./routes/order");
 const cartItemRoutes = require("./routes/cartItem");
+const razorpayRoutes = require("./routes/razorpay");
 
 require("custom-env").env(process.env.NODE_ENV);
 
@@ -31,12 +32,19 @@ app.use(cookieParser());
 app.use(cors());
 
 // Routes middleware
+app.use((err, req, res, next) => {
+  if (err.name === "UnauthorizedError") {
+    res.status(401).json({ error: err.name + ": " + err.message });
+  }
+});
+
 app.use("/api", authRoutes);
 app.use("/api", userRoutes);
 app.use("/api", categoryRoutes);
 app.use("/api", productRoutes);
 app.use("/api", orderRoutes);
 app.use("/api", cartItemRoutes);
+app.use("/api", razorpayRoutes);
 
 //Starting the server
 const port = process.env.PORT || 8000;
