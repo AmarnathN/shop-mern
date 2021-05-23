@@ -14,6 +14,7 @@ import CreateProduct from "./admin/CreateProduct";
 import ManageProduct from "./admin/ManageProduct";
 import UpdateProduct from "./admin/UpdateProduct";
 import UpdateCategory from "./admin/UpdateCategory";
+import Checkout from "./core/checkout/Checkout";
 
 export default function Routes() {
   return (
@@ -23,6 +24,7 @@ export default function Routes() {
         <Route path="/cart" exact component={Cart}></Route>
         <Route path="/signup" exact component={Signup}></Route>
         <Route path="/signin" exact component={Signin}></Route>
+        <PrivateRoute path="/checkout/" exact component={Checkout}></PrivateRoute>
         <AdminRoute path="/admin/dashboard" exact component={AdminDashboard}></AdminRoute>
         <PrivateRoute path="/user/dashboard" exact component={UserDashboard}></PrivateRoute>
         <AdminRoute path="/admin/create/category" exact component={CreateCategory}></AdminRoute>

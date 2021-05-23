@@ -1,7 +1,6 @@
 import { API } from "../../backend";
 
 export const modifyItemInCart = (product, user, token) => {
-  let cart = {};
   if (typeof window !== undefined) {
     if (!localStorage.getItem("jwt")) {
       console.log("Need to login");

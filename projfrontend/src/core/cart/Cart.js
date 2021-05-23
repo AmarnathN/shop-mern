@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-
+import { Link } from "react-router-dom";
 import Base from "../Base";
 import CartCard from "./CartCard";
 import { loadCart } from "../helper/cartHelper";
@@ -13,13 +13,14 @@ const Cart = () => {
     error: "",
     isSuccess: false,
     loading: true,
+    reload: false,
   });
-  const { loading, products, isSuccess } = values;
+  const { loading, cartItems, isSuccess, reload } = values;
 
   const { user, token } = isAuthenticated();
-  const preLoad = () => {
+  const preLoad = async () => {
     setValues({ ...values, loading: true });
-    loadCart(token).then((data) => {
+    await loadCart(token).then((data) => {
       if (data.error) {
         setValues({ ...values, error: data.error });
       }
@@ -31,13 +32,22 @@ const Cart = () => {
 
   useEffect(() => {
     preLoad();
-  }, []);
+  }, [reload]);
+
+  const handleRefreshCart = () => {
+    setValues({ ...values, reload: true });
+  };
 
   const loadCheckOut = () => {
-    return <Button variant="contained">Checkout</Button>;
-  };
-  const handleRefreshCart = () => {
-    preLoad();
+    return (
+      <Button
+        variant="contained"
+        component={Link}
+        to={{ pathname: "/checkout", params: { cartItems, refreshCart: { handleRefreshCart } } }}
+      >
+        Checkout
+      </Button>
+    );
   };
 
   return (
