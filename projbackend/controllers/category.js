@@ -42,7 +42,7 @@ exports.createCategory = (req, res) => {
 };
 
 exports.updateCategory = (req, res) => {
-  Category.findOneAndUpdate({ _id: req.category._id }, { $set: req.body }, { new: true }, (err, category) => {
+  Category.findOneAndUpdate({ _id: req.category._id }, { $set: req.body }, { new: true, useFindAndModify: false }, (err, category) => {
     if (err) {
       return res.status(400).json({ error: "unable to update Category info" });
     }

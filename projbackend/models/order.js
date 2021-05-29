@@ -23,11 +23,14 @@ var orderSchema = new mongoose.Schema(
       type: String,
       default: "RECEIVED",
       enum: {
-        values: ["RECEIVED", "PROCESSING", "SHIPPED", "DELIVERED", "CANCELLED"],
+        values: ["RECEIVED", "PROCESSING", "PAID", "SHIPPED", "DELIVERED", "CANCELLED"],
         message: "{VALUE} is not supported",
       },
     },
-    address: String,
+    address: {
+      type: ObjectId,
+      ref: "Address",
+    },
     updated: Date,
     user: {
       type: ObjectId,

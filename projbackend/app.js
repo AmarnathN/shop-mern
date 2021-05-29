@@ -13,6 +13,7 @@ const productRoutes = require("./routes/product");
 const orderRoutes = require("./routes/order");
 const cartItemRoutes = require("./routes/cartItem");
 const razorpayRoutes = require("./routes/razorpay");
+const shippingAddressRoutes = require("./routes/shippingAddress");
 
 require("custom-env").env(process.env.NODE_ENV);
 
@@ -44,6 +45,7 @@ app.use("/api", categoryRoutes);
 app.use("/api", productRoutes);
 app.use("/api", orderRoutes);
 app.use("/api", cartItemRoutes);
+app.use("/api", shippingAddressRoutes);
 app.use("/api", razorpayRoutes);
 
 //Starting the server
