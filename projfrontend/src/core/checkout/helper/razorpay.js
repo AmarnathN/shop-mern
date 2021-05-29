@@ -1,4 +1,5 @@
 const { loadScript } = require("../../common/domHelper");
+const { createOrder } = require("../../helper/orderHelper");
 const { createRazorpayOrder } = require("../../helper/razorpayApi");
 
 exports.displayRazorpay = async (user, paymentOptions, token) => {
@@ -17,6 +18,7 @@ exports.displayRazorpay = async (user, paymentOptions, token) => {
 
   const data = await createRazorpayOrder(razorPayOptions, token);
 
+  createOrder(token);
   const options = {
     key: process.env.RAZORPAY_API_KEY,
     currency: data.currency,
@@ -36,5 +38,7 @@ exports.displayRazorpay = async (user, paymentOptions, token) => {
   };
 
   const paymentObject = new window.Razorpay(options);
-  paymentObject.open();
+  paymentObject.open(() => {
+    alert("Payment Success");
+  });
 };

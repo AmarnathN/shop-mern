@@ -1,6 +1,6 @@
 import { API } from "../../backend";
 
-const createOrder = (token, orderData) => {
+export const createOrder = (token, orderData) => {
   return fetch(`${API}/order/create/`, {
     method: "POST",
     headers: {
