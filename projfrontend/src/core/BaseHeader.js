@@ -1,22 +1,16 @@
 import React, { useEffect, useState } from "react";
-import { AppBar, Badge, IconButton, ListItemText, makeStyles, ListItem, Toolbar, Typography } from "@material-ui/core";
+import { AppBar, Badge, IconButton, ListItemText, makeStyles, ListItem, Toolbar, Typography, Link } from "@material-ui/core";
 import { AccountCircle, Menu as MenuIcon, ShoppingCart as ShoppingCartIcon } from "@material-ui/icons";
 import { isAuthenticated, signout } from "../auth/helper";
 import { loadCart } from "./helper/cartHelper";
 import SignInOrUp from "../components/login/SignInOrUp";
 import { MyControls } from "../components/ui/controls/MyControls";
-import { Link } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
   menuButton: {
     marginRight: theme.spacing(2),
   },
-  title: {
-    display: "none",
-    [theme.breakpoints.up("sm")]: {
-      display: "block",
-    },
-  },
+  title: {},
   grow: {
     flexGrow: 1,
   },
@@ -24,6 +18,7 @@ const useStyles = makeStyles((theme) => ({
 
 const BaseHeader = (props) => {
   const classes = useStyles();
+
   const [openPopup, setOpenPopup] = useState(false);
   const [cartItems, setCartItems] = useState([]);
   const [anchorEl, setAnchorEl] = useState(null);
@@ -72,7 +67,7 @@ const BaseHeader = (props) => {
     <MyControls.Drawer toggleDrawer={toggleDrawer} drawerOpen={drawerOpen}>
       {isAuthenticated() && (
         <React.Fragment>
-          <ListItem component={Link} to={user.role == "1" ? "admin/dashboard" : "user/dashboard"}>
+          <ListItem component={Link} href={user.role == "1" ? "admin/dashboard" : "user/dashboard"}>
             <ListItemText primary={"Dashboard"} />
           </ListItem>
           <ListItem
@@ -93,7 +88,9 @@ const BaseHeader = (props) => {
       <AppBar position="static">
         <Toolbar>
           <Typography className={classes.title} variant="h6" noWrap>
-            Material-UI
+            <Link href="/" variant="inherit" color="inherit" underline="none">
+              <strong>{process.env.REACT_APP_SHOP_BRAND}</strong>
+            </Link>
           </Typography>
           <div className={classes.grow} />
           <div className={classes.sectionDesktop}>
