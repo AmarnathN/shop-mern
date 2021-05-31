@@ -17,10 +17,13 @@ const useStyles = makeStyles((theme) => ({
     height: "87vh",
     overflow: "auto",
   },
+  appBodyChildren: {
+    marginTop: theme.spacing(1),
+    marginBottom: theme.spacing(1),
+  },
   appFooter: {
     height: "5vh",
   },
-  pageContent: {},
 }));
 
 const Base = ({ title = "My Title", description = "My Description", className = "text-white p-2", children }) => {
@@ -37,7 +40,7 @@ const Base = ({ title = "My Title", description = "My Description", className = 
             <div className={classes.appBody}>
               <PageHeader title={title} description={description} />
 
-              <div className={`${className}`}>{children}</div>
+              <div className={classes.appBodyChildren}>{children}</div>
             </div>
             <div className={classes.appFooter}>
               <BaseFooter />
