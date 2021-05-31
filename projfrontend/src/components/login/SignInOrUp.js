@@ -4,18 +4,23 @@ import SignInForm from "./SignInForm";
 import SignUpForm from "./SignUpForm";
 
 const SignInOrUp = (props) => {
+  const [notify, setNotify] = useState({ isOpen: false, alertMessage: "", alertType: "" });
   const tabsList = [
     {
       label: "SignIn",
-      component: <SignInForm />,
+      component: <SignInForm notify={notify} setNotify={setNotify} />,
     },
     {
       label: "SignUp",
-      component: <SignUpForm />,
+      component: <SignUpForm notify={notify} setNotify={setNotify} />,
     },
   ];
-
-  return <MyControls.Tabs tabsList={tabsList} />;
+  return (
+    <React.Fragment>
+      <MyControls.Notification notify={notify} setNotify={setNotify} />
+      <MyControls.Tabs tabsList={tabsList} />
+    </React.Fragment>
+  );
 };
 
 export default SignInOrUp;

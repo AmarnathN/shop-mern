@@ -3,6 +3,7 @@ import React from "react";
 import { Redirect } from "react-router";
 import { authenticate, isAuthenticated, signin, signup } from "../../auth/helper";
 import { MyControls } from "../ui/controls/MyControls";
+import { useHistory } from "react-router-dom";
 
 const intialFieldValues = {
   name: "",
@@ -13,8 +14,9 @@ const intialFieldValues = {
 };
 
 const SignUpForm = (props) => {
-  const {} = props;
+  const { notify, setNotify } = props;
   const { user } = isAuthenticated();
+  const history = useHistory();
 
   const validate = (fieldValues = values) => {
     let temp = { ...errors };
@@ -44,9 +46,9 @@ const SignUpForm = (props) => {
   const performRedirect = () => {
     if (values.didRedirect) {
       if (user && user.role == 1) {
-        return <Redirect to="/admin/dashboard" />;
+        history.push("/admin/dashboard");
       } else {
-        return <Redirect to="/user/dashboard" />;
+        history.push("/user/dashboard");
       }
     }
   };
@@ -58,7 +60,7 @@ const SignUpForm = (props) => {
     signup({ name: values.name, email: values.email, password: values.password, role: values.role })
       .then((data) => {
         if (data.error) {
-          setValues({ ...values, error: data.error });
+          setNotify({ isOpen: true, alertMessage: JSON.stringify(data.error), alertType: "error" });
         } else {
           signin({ email: values.email, password: values.password }).then((data) => {
             authenticate(data, () => {

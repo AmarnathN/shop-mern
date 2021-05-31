@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { AppBar, Badge, IconButton, ListItemText, makeStyles, ListItem, Toolbar, Typography, Link } from "@material-ui/core";
-import { AccountCircle, Menu as MenuIcon, ShoppingCart as ShoppingCartIcon } from "@material-ui/icons";
+import { AccountCircle, BrandingWatermark, Menu as MenuIcon, ShoppingCart as ShoppingCartIcon } from "@material-ui/icons";
 import { isAuthenticated, signout } from "../auth/helper";
 import { loadCart } from "./helper/cartHelper";
 import SignInOrUp from "../components/login/SignInOrUp";
@@ -70,6 +70,19 @@ const BaseHeader = (props) => {
     history.push("/cart");
   };
 
+  const redirectToHome = () => {
+    history.push("/");
+  };
+
+  const redirectToDashBoard = () => {
+    history.push(user.role == "1" ? "/admin/dashboard" : "/user/dashboard");
+  };
+
+  const redirectToSignOut = () => {
+    signout(() => {});
+    history.push("/");
+  };
+
   const renderSignInOrUp = (
     <MyControls.PopupDialog openPopup={openPopup} handleClosePopup={handleClosePopup}>
       <SignInOrUp />
@@ -80,15 +93,10 @@ const BaseHeader = (props) => {
     <MyControls.Drawer toggleDrawer={toggleDrawer} drawerOpen={drawerOpen}>
       {isAuthenticated() && (
         <React.Fragment>
-          <ListItem component={Link} href={user.role == "1" ? "admin/dashboard" : "user/dashboard"}>
+          <ListItem button onClick={redirectToDashBoard} key={"Dashboard"}>
             <ListItemText primary={"Dashboard"} />
           </ListItem>
-          <ListItem
-            component={Link}
-            onClick={() => {
-              signout(() => {});
-            }}
-          >
+          <ListItem button onClick={redirectToSignOut} key={"SignOut"}>
             <ListItemText primary={"SignOut"} />
           </ListItem>
         </React.Fragment>
@@ -99,24 +107,23 @@ const BaseHeader = (props) => {
   return (
     <AppBar position="static" className={classes.root}>
       <Toolbar>
-        <Typography className={classes.title} variant="h6" noWrap>
-          <Link href="/" variant="inherit" color="inherit" underline="none">
-            <strong>{process.env.REACT_APP_SHOP_BRAND}</strong>
-          </Link>
-        </Typography>
+        <MyControls.ActionIconButton onClick={redirectToHome}>
+          <BrandingWatermark />
+          <strong>{process.env.REACT_APP_SHOP_BRAND}</strong>
+        </MyControls.ActionIconButton>
         <div className={classes.grow} />
         <div className={classes.sectionDesktop}>
           {isAuthenticated() && (
             <React.Fragment>
-              <IconButton aria-label="show cart items" color="inherit">
+              <MyControls.ActionIconButton color="inherit" onClick={redirectToCart}>
                 <Badge badgeContent={cartItems.length} color="secondary">
                   <ShoppingCartIcon onClick={redirectToCart} />
                 </Badge>
-              </IconButton>
+              </MyControls.ActionIconButton>
 
-              <IconButton edge="end" onClick={toggleDrawer} color="inherit">
+              <MyControls.ActionIconButton color="inherit" onClick={toggleDrawer}>
                 <AccountCircle />
-              </IconButton>
+              </MyControls.ActionIconButton>
             </React.Fragment>
           )}
           {!isAuthenticated() && <MyControls.Button text={"Login"} onClick={handleLoginClick} />}

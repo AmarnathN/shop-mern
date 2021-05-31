@@ -1,8 +1,8 @@
 import { Grid } from "@material-ui/core";
 import React from "react";
-import { Redirect } from "react-router";
 import { authenticate, isAuthenticated, signin } from "../../auth/helper";
 import { MyControls } from "../ui/controls/MyControls";
+import { useHistory } from "react-router-dom";
 
 const intialFieldValues = {
   email: "a8@test.com",
@@ -12,8 +12,9 @@ const intialFieldValues = {
 };
 
 const SignInForm = (props) => {
-  const {} = props;
+  const { setNotify } = props;
   const { user } = isAuthenticated();
+  const history = useHistory();
 
   const validate = (fieldValues = values) => {
     let temp = { ...errors };
@@ -37,9 +38,9 @@ const SignInForm = (props) => {
   const performRedirect = () => {
     if (values.didRedirect) {
       if (user && user.role == 1) {
-        return <Redirect to="/admin/dashboard" />;
+        history.push("/admin/dashboard");
       } else {
-        return <Redirect to="/user/dashboard" />;
+        history.push("/user/dashboard");
       }
     }
   };
@@ -50,7 +51,7 @@ const SignInForm = (props) => {
     signin({ email: values.email, password: values.password })
       .then((data) => {
         if (data.error) {
-          setValues({ ...values, error: data.error, loading: false });
+          setNotify({ isOpen: true, alertMessage: JSON.stringify(data.error), alertType: "error" });
         } else {
           authenticate(data, () => {
             setValues({ ...values, email: "", password: "", error: false, loading: false, didRedirect: true });
