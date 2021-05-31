@@ -4,6 +4,7 @@ import { getAllProducts } from "../../admin/helper/productApi";
 import Base from "../Base";
 import HomeCard from "./HomeCard";
 import ProgressBar from "../common/progressBar";
+import { Grid } from "@material-ui/core";
 
 export default function Home() {
   const [values, setValues] = useState({
@@ -30,15 +31,15 @@ export default function Home() {
     <Base title="Homepage">
       {loading && ProgressBar()}
       {!loading && (
-        <div className="row bg-gradient">
+        <Grid container>
           {products.map((product) => {
             return (
-              <div className="col-lg-4 col-md-6 col-sm-6 gy-4">
+              <Grid item xs={12} sm={6} md={4} lg={3}>
                 <HomeCard product={product}></HomeCard>
-              </div>
+              </Grid>
             );
           })}
-        </div>
+        </Grid>
       )}
     </Base>
   );
