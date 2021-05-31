@@ -6,8 +6,9 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: theme.palette.background.default,
     display: "flex",
     height: "100%",
-    boxShadow: `0 -12px 20px -12px rgba(255, 98, 0, .5)`,
+    boxShadow: `0 -12px 10px -12px rgba(255, 98, 0, .5)`,
     justifyContent: "center",
+    transform: "translateZ(19.7rem)",
   },
 }));
 
