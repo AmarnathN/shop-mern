@@ -14,6 +14,13 @@ const useStyles = makeStyles((theme) => ({
   grow: {
     flexGrow: 1,
   },
+  root: {
+    height: "100%",
+    backgroundColor: theme.palette.theme.main,
+    transform: "translateZ(-19.7rem)",
+    background: `linear-gradient(165deg,white 75%,${theme.palette.theme.main}  95%)`,
+    boxShadow: `0 3px 5px 2px rgba(0, 224, 206, .3)`,
+  },
 }));
 
 const BaseHeader = (props) => {
@@ -58,7 +65,7 @@ const BaseHeader = (props) => {
   };
 
   const renderSignInOrUp = (
-    <MyControls.PopupDialog anchorEl={anchorEl} openPopup={openPopup} handleClosePopup={handleClosePopup}>
+    <MyControls.PopupDialog openPopup={openPopup} handleClosePopup={handleClosePopup}>
       <SignInOrUp />
     </MyControls.PopupDialog>
   );
@@ -84,36 +91,35 @@ const BaseHeader = (props) => {
   );
 
   return (
-    <div className={classes.grow}>
-      <AppBar position="static">
-        <Toolbar>
-          <Typography className={classes.title} variant="h6" noWrap>
-            <Link href="/" variant="inherit" color="inherit" underline="none">
-              <strong>{process.env.REACT_APP_SHOP_BRAND}</strong>
-            </Link>
-          </Typography>
-          <div className={classes.grow} />
-          <div className={classes.sectionDesktop}>
-            {isAuthenticated() && (
-              <React.Fragment>
-                <IconButton aria-label="show cart items" color="inherit">
-                  <Badge badgeContent={cartItems.length} color="secondary">
-                    <ShoppingCartIcon />
-                  </Badge>
-                </IconButton>
+    <AppBar position="static" className={classes.root}>
+      <Toolbar>
+        <Typography className={classes.title} variant="h6" noWrap>
+          <Link href="/" variant="inherit" color="inherit" underline="none">
+            <strong>{process.env.REACT_APP_SHOP_BRAND}</strong>
+          </Link>
+        </Typography>
+        <div className={classes.grow} />
+        <div className={classes.sectionDesktop}>
+          {isAuthenticated() && (
+            <React.Fragment>
+              <IconButton aria-label="show cart items" color="inherit">
+                <Badge badgeContent={cartItems.length} color="secondary">
+                  <ShoppingCartIcon />
+                </Badge>
+              </IconButton>
 
-                <IconButton edge="end" onClick={toggleDrawer} color="inherit">
-                  <AccountCircle />
-                </IconButton>
-              </React.Fragment>
-            )}
-            {!isAuthenticated() && <MyControls.Button text={"Login"} onClick={handleLoginClick} />}
-          </div>
-        </Toolbar>
-      </AppBar>
+              <IconButton edge="end" onClick={toggleDrawer} color="inherit">
+                <AccountCircle />
+              </IconButton>
+            </React.Fragment>
+          )}
+          {!isAuthenticated() && <MyControls.Button text={"Login"} onClick={handleLoginClick} />}
+        </div>
+      </Toolbar>
+
       {renderSignInOrUp}
       {renderMenu}
-    </div>
+    </AppBar>
   );
 };
 
