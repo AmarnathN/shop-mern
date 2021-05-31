@@ -5,6 +5,7 @@ import { isAuthenticated, signout } from "../auth/helper";
 import { loadCart } from "./helper/cartHelper";
 import SignInOrUp from "../components/login/SignInOrUp";
 import { MyControls } from "../components/ui/controls/MyControls";
+import { useHistory } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
   menuButton: {
@@ -25,6 +26,7 @@ const useStyles = makeStyles((theme) => ({
 
 const BaseHeader = (props) => {
   const classes = useStyles();
+  const history = useHistory();
 
   const [openPopup, setOpenPopup] = useState(false);
   const [cartItems, setCartItems] = useState([]);
@@ -62,6 +64,10 @@ const BaseHeader = (props) => {
       return;
     }
     setDrawerOpen(!drawerOpen);
+  };
+
+  const redirectToCart = () => {
+    history.push("/cart");
   };
 
   const renderSignInOrUp = (
@@ -104,7 +110,7 @@ const BaseHeader = (props) => {
             <React.Fragment>
               <IconButton aria-label="show cart items" color="inherit">
                 <Badge badgeContent={cartItems.length} color="secondary">
-                  <ShoppingCartIcon />
+                  <ShoppingCartIcon onClick={redirectToCart} />
                 </Badge>
               </IconButton>
 
