@@ -44,7 +44,6 @@ exports.modifyCartItem = async (req, res) => {
   let macthedCartItem = await CartItem.findOne({ product: product, user: user }).exec();
   if (macthedCartItem) {
     req.body.quantity = Number.parseInt(req.body.quantity) + Number.parseInt(macthedCartItem.quantity);
-    console.log(req.body.quantity);
     CartItem.findOneAndUpdate({ product: product, user: user }, { $set: req.body }, { new: true, useFindAndModify: false }, (err, cart) => {
       if (err) {
         return res.status(400).json({ error: "unable to update cart info" });
