@@ -21,7 +21,7 @@ exports.getCartItem = (req, res) => {
 
 exports.getAllCartItems = async (req, res) => {
   let limit = req.query.limit == undefined ? DEFAULT_QUERY_PAGE_LIMIT : parseInt(req.query.limit);
-  let sortBy = req.query.sortBy || "updatedAt";
+  let sortBy = req.query.sortBy || "_id";
 
   let user = await User.findOne({ _id: req.jwt_auth._id }).lean().exec();
   CartItem.find({ user: user._id })
