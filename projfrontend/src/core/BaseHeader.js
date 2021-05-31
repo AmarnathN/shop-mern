@@ -5,6 +5,7 @@ import { isAuthenticated, signout } from "../auth/helper";
 import { loadCart } from "./helper/cartHelper";
 import SignInOrUp from "../components/login/SignInOrUp";
 import { MyControls } from "../components/ui/controls/MyControls";
+import { useHistory } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
   menuButton: {
@@ -25,6 +26,7 @@ const useStyles = makeStyles((theme) => ({
 
 const BaseHeader = (props) => {
   const classes = useStyles();
+  const history = useHistory();
 
   const [openPopup, setOpenPopup] = useState(false);
   const [cartItems, setCartItems] = useState([]);
@@ -62,6 +64,23 @@ const BaseHeader = (props) => {
       return;
     }
     setDrawerOpen(!drawerOpen);
+  };
+
+  const redirectToCart = () => {
+    history.push("/cart");
+  };
+
+  const redirectToHome = () => {
+    history.push("/");
+  };
+
+  const redirectToDashBoard = () => {
+    history.push(user.role == "1" ? "/admin/dashboard" : "/user/dashboard");
+  };
+
+  const redirectToSignOut = () => {
+    signout(() => {});
+    history.push("/");
   };
 
   const renderSignInOrUp = (
