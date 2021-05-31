@@ -23,8 +23,18 @@ import Alert from "@material-ui/lab/Alert";
 
 import { modifyItemInCart, loadCart, deleteCartItem } from "../helper/cartHelper";
 import { isAuthenticated } from "../../auth/helper";
+import { MyControls } from "../../components/ui/controls/MyControls";
 
 const useStyles = makeStyles((theme) => ({
+  root: {
+    display: "flex",
+    flexDirection: "row",
+    margin: theme.spacing(1),
+  },
+  media: {
+    height: 100,
+    width: "100%",
+  },
   expand: {
     transform: "rotate(0deg)",
     marginLeft: "auto",
@@ -37,11 +47,15 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+const productDescriptionLabels = ["Description", "Price"];
+
 const CartCard = (props) => {
+  const { item, refreshCart } = props;
+
   const classes = useStyles();
   const [expanded, setExpanded] = useState(false);
   const [redirect, setRedirect] = useState(false);
-  const [countOfItemsToCart, setCountOfItemsToCart] = useState(props.item.quantity);
+  const [countOfItemsToCart, setCountOfItemsToCart] = useState(item.quantity);
   const [addDisabled, setAddDisabled] = useState(false);
   const [removeDisabled, setRemoveDisabled] = useState(true);
   const [alertToLogin, setAlertToLogin] = useState(false);
@@ -87,7 +101,7 @@ const CartCard = (props) => {
       setError(response.error);
       setAlertToLogin(true);
     } else {
-      setRedirect(true);
+      props.refreshCart();
     }
   };
 
@@ -99,18 +113,16 @@ const CartCard = (props) => {
     let response = await deleteCartItem(props.item._id, token);
     if (response.error) {
       setError(response.error);
-    } else {
-      props.refreshCart();
     }
+    props.refreshCart();
   };
 
-  const handleChangeCountOfItemsToCart = (event, diff) => {
-    event.preventDefault();
+  const handleChangeCountOfItemsToCart = async (event, diff) => {
     let count = countOfItemsToCart + diff;
 
     if (count >= 0) {
+      await handleAddItemToCart(diff);
       setCountOfItemsToCart(count);
-      handleAddItemToCart(diff);
     }
 
     setAddDisabled(count === product.stock ? true : false);
@@ -120,78 +132,79 @@ const CartCard = (props) => {
 
   const numberOfItemsToCart = () => {
     return (
-      <>
+      <React.Fragment>
         <Fab size="small" color="secondary" aria-label="remove" disabled={removeDisabled}>
           <RemoveIcon onClick={(event) => handleChangeCountOfItemsToCart(event, -1)} />
         </Fab>
-        <Fab size="small" color="info" aria-label="count">
+        <Fab size="small" color="default" aria-label="count">
           <strong>{countOfItemsToCart}</strong>
         </Fab>
         <Fab size="small" color="primary" aria-label="add" disabled={addDisabled}>
           <AddIcon onClick={(event) => handleChangeCountOfItemsToCart(event, 1)} />
         </Fab>
-      </>
+      </React.Fragment>
     );
   };
 
   return (
-    <Card className="card" color={"secondary"}>
-      <Box textAlign="center" bgcolor="text.disabled">
-        <CardHeader title={product.name} subheader={product.category.name} />
-      </Box>
-      <Paper elevation={5} bgcolor="primary">
-        <CardMedia style={{ height: 0, paddingTop: "56.25%" }} image={product.image} title={product.name} />
-        <Grid container justify="space-between">
-          <IconButton>
-            <ArrowDropDownCircleIcon
-              className={clsx(classes.expand, {
-                [classes.expandOpen]: expanded,
-              })}
-              onClick={handleExpandClick}
-              aria-expanded={expanded}
-              aria-label="Description"
-              color={"default"}
-              fontSize="small"
-            />
-          </IconButton>
-
-          <Button variant="contained" color="secondary" startIcon={<DeleteIcon />} onClick={removeFromCart}>
-            Delete
-          </Button>
+    <Card className={classes.root}>
+      <Grid container>
+        <Grid item xs={3} sm={3} md={3} lg={2}>
+          <MyControls.Paper square>
+            <CardMedia image={product.image} title={product.name} className={classes.media} />
+          </MyControls.Paper>
         </Grid>
-
+        <Grid item xs={9} sm={9} md={9} lg={5}>
+          <MyControls.Paper square>
+            <Typography variant="h6" component="p">
+              {product.name}
+            </Typography>
+            <IconButton>
+              <ArrowDropDownCircleIcon
+                className={clsx(classes.expand, {
+                  [classes.expandOpen]: expanded,
+                })}
+                onClick={handleExpandClick}
+                aria-expanded={expanded}
+                aria-label="Description"
+                color={"default"}
+                fontSize="small"
+              />
+            </IconButton>
+          </MyControls.Paper>
+        </Grid>
+        <Grid item xs={6} sm={3} md={3} lg={2} justify="center">
+          <MyControls.Box justify="space-between">
+            <CardActions>{numberOfItemsToCart()}</CardActions>
+          </MyControls.Box>
+        </Grid>
+        <Grid item xs={6} sm={6} md={6} lg={1} justify="center" alignItems="center">
+          <MyControls.Box>
+            <MyControls.Button variant="contained" color="secondary" startIcon={<DeleteIcon />} onClick={removeFromCart} text={"Remove"} />
+          </MyControls.Box>
+        </Grid>
+        <Grid item off-set={8} xs={4} sm={3} md={3} lg={2}>
+          <MyControls.Box justify={"right"}>
+            <Typography noWrap>
+              Amount <br /> Rs.{(countOfItemsToCart * product.price).toFixed(2)}
+            </Typography>
+          </MyControls.Box>
+        </Grid>
         <Collapse in={expanded} timeout="auto" unmountOnExit>
           <CardContent>
-            <Typography paragraph>{product.description}</Typography>
+            {productDescriptionLabels.map((property) => {
+              return (
+                <React.Fragment>
+                  <Typography variant="h6">{property} </Typography>
+                  <Typography paragraph>
+                    {property === "Price" ? `Rs.${product[property.toLowerCase()]} /-` : product[property.toLowerCase()]}
+                  </Typography>
+                </React.Fragment>
+              );
+            })}
           </CardContent>
         </Collapse>
-      </Paper>
-      <CardContent>
-        {/* {getRedirect(redirect)} */}
-        {alertToLogin && errorMessage()}
-        <Grid container>
-          <Grid item xs={12} sm={12} md={6}>
-            <Box p={1} textAlign="center" bgcolor="text.secondary">
-              <Paper>
-                <Typography noWrap>Amount</Typography>
-              </Paper>
-            </Box>
-          </Grid>
-          <Grid item xs={12} sm={12} md={6}>
-            <Box p={1} textAlign="center" bgcolor="text.disabled">
-              <Paper>
-                <Typography noWrap>Rs.{(countOfItemsToCart * product.price).toFixed(2)} </Typography>
-              </Paper>
-            </Box>
-          </Grid>
-        </Grid>
-      </CardContent>
-
-      <CardActions>
-        <Grid container justify="space-between">
-          {numberOfItemsToCart()}
-        </Grid>
-      </CardActions>
+      </Grid>
     </Card>
   );
 };

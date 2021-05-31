@@ -117,7 +117,7 @@ const BaseHeader = (props) => {
             <React.Fragment>
               <MyControls.ActionIconButton color="inherit" onClick={redirectToCart}>
                 <Badge badgeContent={cartItems.length} color="secondary">
-                  <ShoppingCartIcon />
+                  <ShoppingCartIcon onClick={redirectToCart} />
                 </Badge>
               </MyControls.ActionIconButton>
 

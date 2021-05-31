@@ -6,6 +6,11 @@ const { ObjectId } = mongoose.Schema;
 var cartItemSchema = extendSchema(
   BaseSchema,
   {
+    quantity: {
+      type: Number,
+      trim: true,
+      default: 0,
+    },
     product: {
       type: ObjectId,
       ref: "Product",
@@ -16,13 +21,20 @@ var cartItemSchema = extendSchema(
       ref: "User",
       required: true,
     },
-    quantity: {
-      type: Number,
-      trim: true,
-      default: 0,
-    },
   },
-  { timestamps: true }
+  {
+    timestamps: true,
+    toObject: {
+      virtuals: true,
+    },
+    toJSON: {
+      virtuals: true,
+    },
+  }
 );
+
+cartItemSchema.virtual("total").get(function () {
+  return this.quantity * this.product.price;
+});
 
 module.exports = mongoose.model("CartItem", cartItemSchema);
