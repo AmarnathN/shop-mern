@@ -5,6 +5,7 @@ import Base from "../Base";
 import HomeCard from "./HomeCard";
 import ProgressBar from "../common/progressBar";
 import { Grid } from "@material-ui/core";
+import { MyControls } from "../../components/ui/controls/MyControls";
 
 export default function Home() {
   const [values, setValues] = useState({
@@ -13,6 +14,7 @@ export default function Home() {
     isSuccess: false,
     loading: true,
   });
+  const [notify, setNotify] = useState({ isOpen: false, alertMessage: "", alertType: "" });
   const { loading, products } = values;
   const preLoad = () => {
     getAllProducts(0).then((data) => {
@@ -30,12 +32,13 @@ export default function Home() {
   return (
     <Base title="Homepage">
       {loading && ProgressBar()}
+      <MyControls.Notification notify={notify} setNotify={setNotify} />
       {!loading && (
         <Grid container>
           {products.map((product) => {
             return (
               <Grid item xs={12} sm={6} md={4} lg={3} xl={2}>
-                <HomeCard product={product}></HomeCard>
+                <HomeCard product={product} notify={notify} setNotify={setNotify}></HomeCard>
               </Grid>
             );
           })}

@@ -1,11 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-import {
-  Add as AddIcon,
-  Remove as RemoveIcon,
-  Navigation as NavigationIcon,
-  ArrowDropDownCircle as ArrowDropDownCircleIcon,
-} from "@material-ui/icons";
+import { Add as AddIcon, Remove as RemoveIcon, ArrowDropDownCircle as ArrowDropDownCircleIcon } from "@material-ui/icons";
 import clsx from "clsx";
 
 import {
@@ -17,18 +12,16 @@ import {
   Typography,
   Collapse,
   Avatar,
-  Snackbar,
   Paper,
   Grid,
-  Box,
   IconButton,
-  Fab,
 } from "@material-ui/core";
 import Alert from "@material-ui/lab/Alert";
 
 import { modifyItemInCart, loadCart } from "../helper/cartHelper";
 import { isAuthenticated } from "../../auth/helper";
 import { MyControls } from "../../components/ui/controls/MyControls";
+import { theme } from "../Theme";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -47,55 +40,22 @@ const useStyles = makeStyles((theme) => ({
 
 const productDescriptionLabels = ["Description", "Price", "Stock"];
 
-const HomeCard = ({ product, quantity = 0 }) => {
+const HomeCard = (props) => {
+  const { product, quantity = 0, notify, setNotify } = props;
   const classes = useStyles();
   const [expanded, setExpanded] = useState(false);
-  const [redirect, setRedirect] = useState(false);
   const [countOfItemsToCart, setCountOfItemsToCart] = useState(quantity);
   const [addDisabled, setAddDisabled] = useState(false);
   const [removeDisabled, setRemoveDisabled] = useState(true);
   const [addToCartDisabled, setAddToCartDisabled] = useState(true);
-  const [alertToLogin, setAlertToLogin] = useState(false);
-  const [error, setError] = useState("");
 
   const { user, token } = isAuthenticated();
-
-  const preLoad = () => {
-    setRemoveDisabled(countOfItemsToCart <= 0);
-  };
-
-  useEffect(() => {
-    preLoad();
-  }, []);
-
-  const handleClose = () => {
-    setError("");
-    setAlertToLogin(false);
-  };
-
-  const errorMessage = () => {
-    return (
-      <div className="row">
-        <Snackbar
-          open={error != ""}
-          autoHideDuration={6000}
-          onClose={handleClose}
-          anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
-        >
-          <Alert onClose={handleClose} severity="error">
-            <p>{JSON.stringify(error)}</p>
-          </Alert>
-        </Snackbar>
-      </div>
-    );
-  };
 
   const handleAddItemToCart = async () => {
     product.count = countOfItemsToCart;
     let response = await modifyItemInCart(product, user, token);
     if (response.error) {
-      setError(response.error);
-      setAlertToLogin(true);
+      setNotify({ isOpen: true, alertMessage: response.error, alertType: "error" });
     } else {
       setCountOfItemsToCart(0);
       setRemoveDisabled(true);
@@ -109,15 +69,11 @@ const HomeCard = ({ product, quantity = 0 }) => {
   const handleChangeCountOfItemsToCart = (event, diff) => {
     event.preventDefault();
     let count = countOfItemsToCart + diff;
-
     if (count >= 0) {
       setCountOfItemsToCart(count);
     }
-
     setAddDisabled(count === product.stock ? true : false);
-
     setRemoveDisabled(count === 0 ? true : false);
-
     setAddToCartDisabled(count > 0 ? false : true);
   };
 
@@ -125,15 +81,13 @@ const HomeCard = ({ product, quantity = 0 }) => {
     return (
       <Grid item xs={12} sm={12} lg={12} container direction="row" justify="center" alignItems="center">
         <Grid container xs={12} sm={12} md={12} lg={12} direction="row" justify="space-between">
-          <Fab size="small" color="secondary" aria-label="remove" disabled={removeDisabled}>
+          <MyControls.Fab color="secondary" disabled={removeDisabled}>
             <RemoveIcon onClick={(event) => handleChangeCountOfItemsToCart(event, -1)} />
-          </Fab>
-
+          </MyControls.Fab>
           <Avatar>{countOfItemsToCart}</Avatar>
-
-          <Fab size="small" color="primary" aria-label="add" disabled={addDisabled}>
+          <MyControls.Fab color="primary" disabled={addDisabled}>
             <AddIcon onClick={(event) => handleChangeCountOfItemsToCart(event, 1)} />
-          </Fab>
+          </MyControls.Fab>
           <MyControls.Button
             text={"Add to Cart"}
             onClick={handleAddItemToCart}
@@ -159,7 +113,6 @@ const HomeCard = ({ product, quantity = 0 }) => {
               onClick={handleExpandClick}
               aria-expanded={expanded}
               aria-label="Description"
-              color={"secondary"}
               fontSize="large"
             />
           </IconButton>
@@ -173,7 +126,6 @@ const HomeCard = ({ product, quantity = 0 }) => {
           <CardActions>{numberOfItemsToCart()}</CardActions>
         </Grid>
       </Grid>
-      {alertToLogin && errorMessage()}
       <Collapse in={expanded} timeout="auto" unmountOnExit>
         <CardContent>
           {productDescriptionLabels.map((property) => {
