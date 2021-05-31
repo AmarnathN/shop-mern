@@ -24,6 +24,9 @@ import { modifyItemInCart, loadCart } from "../helper/cartHelper";
 import { isAuthenticated } from "../../auth/helper";
 
 const useStyles = makeStyles((theme) => ({
+  root: {
+    margin: theme.spacing(0.5),
+  },
   expand: {
     transform: "rotate(0deg)",
     transition: theme.transitions.create("transform", {
@@ -54,12 +57,6 @@ const HomeCard = ({ product, quantity = 0, addToCart = true, removeFromCart = fa
   useEffect(() => {
     preLoad();
   }, []);
-
-  // const getRedirect = (redirect) => {
-  //   if (redirect) {
-  //     return <Redirect to="/cart"></Redirect>;
-  //   }
-  // };
 
   const handleClose = () => {
     setError("");
@@ -98,22 +95,6 @@ const HomeCard = ({ product, quantity = 0, addToCart = true, removeFromCart = fa
     setExpanded(!expanded);
   };
 
-  // const showAddToCart = () => {
-  //   return (
-  //     <Button variant="contained" color="primary" onClick={handleAddItemToCart} disabled={removeDisabled}>
-  //       Add To Cart
-  //     </Button>
-  //   );
-  // };
-
-  // const showRemoveFromCart = () => {
-  //   return (
-  //     <Button variant="contained" color="secondary" disabled={removeDisabled}>
-  //       Remove From Cart
-  //     </Button>
-  //   );
-  // };
-
   const handleChangeCountOfItemsToCart = (event, diff) => {
     event.preventDefault();
     let count = countOfItemsToCart + diff;
@@ -149,24 +130,26 @@ const HomeCard = ({ product, quantity = 0, addToCart = true, removeFromCart = fa
   };
 
   return (
-    <Card className="card" color={"secondary"}>
-      <Box textAlign="center" bgcolor="text.disabled">
-        <CardHeader title={product.name} subheader={product.category.name} />
-      </Box>
-      <Paper elevation={5} bgcolor="primary">
+    <Card className={classes.root}>
+      <Paper elevation={5}>
         <CardMedia style={{ height: 0, paddingTop: "56.25%" }} image={product.image} title={product.name} />
-        <IconButton>
-          <ArrowDropDownCircleIcon
-            className={clsx(classes.expand, {
-              [classes.expandOpen]: expanded,
-            })}
-            onClick={handleExpandClick}
-            aria-expanded={expanded}
-            aria-label="Description"
-            color={"secondary"}
-            fontSize="large"
-          />
-        </IconButton>
+        <Grid container alignItems="center" noWrap>
+          <IconButton>
+            <ArrowDropDownCircleIcon
+              className={clsx(classes.expand, {
+                [classes.expandOpen]: expanded,
+              })}
+              onClick={handleExpandClick}
+              aria-expanded={expanded}
+              aria-label="Description"
+              color={"secondary"}
+              fontSize="large"
+            />
+          </IconButton>
+          <Typography variant="h5" component="p">
+            {product.name}
+          </Typography>
+        </Grid>
         <Collapse in={expanded} timeout="auto" unmountOnExit>
           <CardContent>
             <Typography paragraph>{product.description}</Typography>
