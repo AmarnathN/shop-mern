@@ -104,7 +104,7 @@ const BaseHeader = (props) => {
       <Toolbar>
         <MyControls.ActionIconButton onClick={redirectToHome}>
           <BrandingWatermark />
-          <strong>{process.env.REACT_APP_SHOP_BRAND}</strong>
+          <strong>{process.env.REACT_APP_SHOP_BRAND || "Your Brand"}</strong>
         </MyControls.ActionIconButton>
         <div className={classes.grow} />
         <div className={classes.sectionDesktop}>
