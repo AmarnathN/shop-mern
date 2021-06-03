@@ -20,6 +20,7 @@ export default function Home() {
     getAllProducts(0).then((data) => {
       if (data.error) {
         setValues({ ...values, error: data.error });
+        setNotify({ isOpen: true, alertMessage: data.error, alertType: "error" });
       }
       setValues({ ...values, products: data, error: "", isSuccess: true, loading: false });
     });

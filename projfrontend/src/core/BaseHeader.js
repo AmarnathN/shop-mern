@@ -30,7 +30,6 @@ const BaseHeader = (props) => {
 
   const [openPopup, setOpenPopup] = useState(false);
   const [cartItems, setCartItems] = useState([]);
-  const [anchorEl, setAnchorEl] = useState(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   const { user, token } = isAuthenticated();
@@ -83,11 +82,7 @@ const BaseHeader = (props) => {
     history.push("/");
   };
 
-  const renderSignInOrUp = (
-    <MyControls.PopupDialog openPopup={openPopup} handleClosePopup={handleClosePopup}>
-      <SignInOrUp />
-    </MyControls.PopupDialog>
-  );
+  const renderSignInOrUp = <SignInOrUp openPopup={openPopup} handleClosePopup={handleClosePopup} />;
 
   const renderMenu = (
     <MyControls.Drawer toggleDrawer={toggleDrawer} drawerOpen={drawerOpen}>
@@ -109,7 +104,7 @@ const BaseHeader = (props) => {
       <Toolbar>
         <MyControls.ActionIconButton onClick={redirectToHome}>
           <BrandingWatermark />
-          <strong>{process.env.REACT_APP_SHOP_BRAND}</strong>
+          <strong>{process.env.REACT_APP_SHOP_BRAND || "Your Brand"}</strong>
         </MyControls.ActionIconButton>
         <div className={classes.grow} />
         <div className={classes.sectionDesktop}>

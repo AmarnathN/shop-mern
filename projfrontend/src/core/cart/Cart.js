@@ -11,13 +11,14 @@ import { MyControls } from "../../components/ui/controls/MyControls";
 const Cart = () => {
   const [values, setValues] = useState({
     cartItems: [],
-    error: "",
     isSuccess: false,
     loading: true,
     reload: false,
   });
   const [cartTotalAmount, setCartTotalAmount] = useState(0);
   const [reload, setReload] = useState(false);
+  const [notify, setNotify] = useState({ isOpen: false, alertMessage: "", alertType: "" });
+
   const { loading, cartItems, isSuccess } = values;
 
   const { user, token } = isAuthenticated();
@@ -25,15 +26,16 @@ const Cart = () => {
     setValues({ ...values, loading: true });
     await loadCart(token).then((data) => {
       if (data.error) {
-        setValues({ ...values, error: data.error });
+        setValues({ ...values, loading: false });
+        setNotify({ isOpen: true, alertMessage: data.error, alertType: "error" });
+      } else {
+        data = data.filter((item) => item.product && item.user);
+        setValues({ ...values, cartItems: data, isSuccess: true, loading: false });
+        let amnt = getCartTotalAmount(data);
+        setCartTotalAmount(amnt);
+        console.log("here");
+        return data;
       }
-
-      data = data.filter((item) => item.product && item.user);
-      setValues({ ...values, cartItems: data, isSuccess: true, loading: false });
-      let amnt = getCartTotalAmount(data);
-      setCartTotalAmount(amnt);
-      console.log("here");
-      return data;
     });
   };
 
@@ -77,6 +79,7 @@ const Cart = () => {
   return (
     <Base title="Cart Page" description="Checkout the items">
       {loading && ProgressBar()}
+      <MyControls.Notification notify={notify} setNotify={setNotify} />
       <div>
         {cartItems.length > 0 && (
           <div>
