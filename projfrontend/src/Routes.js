@@ -15,15 +15,16 @@ import ManageProduct from "./admin/ManageProduct";
 import UpdateProduct from "./admin/UpdateProduct";
 import UpdateCategory from "./admin/UpdateCategory";
 import Checkout from "./core/checkout/Checkout";
+import SignInOrUp from "./components/login/SignInOrUp";
 
 export default function Routes() {
   return (
     <BrowserRouter>
       <Switch>
         <Route path="/" exact component={Home}></Route>
-        <Route path="/cart" exact component={Cart}></Route>
-        <Route path="/signup" exact component={Signup}></Route>
-        <Route path="/signin" exact component={Signin}></Route>
+        <PrivateRoute path="/cart" exact component={Cart}></PrivateRoute>
+        <Route path="/signup" exact component={SignInOrUp}></Route>
+        <Route path="/signin" exact component={SignInOrUp}></Route>
         <PrivateRoute path="/checkout/" exact component={Checkout}></PrivateRoute>
         <AdminRoute path="/admin/dashboard" exact component={AdminDashboard}></AdminRoute>
         <PrivateRoute path="/user/dashboard" exact component={UserDashboard}></PrivateRoute>

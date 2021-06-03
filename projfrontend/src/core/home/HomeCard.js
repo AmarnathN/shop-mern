@@ -52,13 +52,17 @@ const HomeCard = (props) => {
   const { user, token } = isAuthenticated();
 
   const handleAddItemToCart = async () => {
-    product.count = countOfItemsToCart;
-    let response = await modifyItemInCart(product, user, token);
-    if (response.error) {
-      setNotify({ isOpen: true, alertMessage: response.error, alertType: "error" });
+    if (isAuthenticated()) {
+      product.count = countOfItemsToCart;
+      let response = await modifyItemInCart(product, user, token);
+      if (response.error) {
+        setNotify({ isOpen: true, alertMessage: response.error, alertType: "error" });
+      } else {
+        setCountOfItemsToCart(0);
+        setRemoveDisabled(true);
+      }
     } else {
-      setCountOfItemsToCart(0);
-      setRemoveDisabled(true);
+      setNotify({ isOpen: true, alertMessage: "Please Sign In to Add items to Cart", alertType: "error" });
     }
   };
 

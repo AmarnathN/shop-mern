@@ -5,6 +5,8 @@ import SignUpForm from "./SignUpForm";
 
 const SignInOrUp = (props) => {
   const [notify, setNotify] = useState({ isOpen: false, alertMessage: "", alertType: "" });
+  const { openPopup = true, handleClosePopup } = props;
+
   const tabsList = [
     {
       label: "SignIn",
@@ -15,11 +17,14 @@ const SignInOrUp = (props) => {
       component: <SignUpForm notify={notify} setNotify={setNotify} />,
     },
   ];
+
   return (
-    <React.Fragment>
-      <MyControls.Notification notify={notify} setNotify={setNotify} />
-      <MyControls.Tabs tabsList={tabsList} />
-    </React.Fragment>
+    <div>
+      <MyControls.PopupDialog openPopup={openPopup} handleClosePopup={handleClosePopup}>
+        <MyControls.Notification notify={notify} setNotify={setNotify} />
+        <MyControls.Tabs tabsList={tabsList} />
+      </MyControls.PopupDialog>
+    </div>
   );
 };
 

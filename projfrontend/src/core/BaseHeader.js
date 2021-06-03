@@ -30,7 +30,6 @@ const BaseHeader = (props) => {
 
   const [openPopup, setOpenPopup] = useState(false);
   const [cartItems, setCartItems] = useState([]);
-  const [anchorEl, setAnchorEl] = useState(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   const { user, token } = isAuthenticated();
@@ -83,11 +82,7 @@ const BaseHeader = (props) => {
     history.push("/");
   };
 
-  const renderSignInOrUp = (
-    <MyControls.PopupDialog openPopup={openPopup} handleClosePopup={handleClosePopup}>
-      <SignInOrUp />
-    </MyControls.PopupDialog>
-  );
+  const renderSignInOrUp = <SignInOrUp openPopup={openPopup} handleClosePopup={handleClosePopup} />;
 
   const renderMenu = (
     <MyControls.Drawer toggleDrawer={toggleDrawer} drawerOpen={drawerOpen}>
