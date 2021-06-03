@@ -33,11 +33,6 @@ app.use(cookieParser());
 app.use(cors());
 
 // Routes middleware
-app.use((err, req, res, next) => {
-  if (err.name === "UnauthorizedError") {
-    res.status(401).json({ error: err.name + ": " + err.message });
-  }
-});
 
 app.use("/api", authRoutes);
 app.use("/api", userRoutes);
@@ -47,6 +42,12 @@ app.use("/api", orderRoutes);
 app.use("/api", cartItemRoutes);
 app.use("/api", shippingAddressRoutes);
 app.use("/api", razorpayRoutes);
+
+app.use((err, req, res, next) => {
+  if (err.name === "UnauthorizedError") {
+    res.status(401).json({ error: err.name + ": " + err.message });
+  }
+});
 
 //Starting the server
 const port = process.env.PORT || 8000;
