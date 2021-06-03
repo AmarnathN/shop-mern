@@ -19,9 +19,11 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: theme.palette.background,
   },
   pageTitle: {
-    paddingLeft: theme.spacing(4),
+    paddingLeft: theme.spacing(2),
+    justifyContent: "center",
+    alignItems: "center",
     "& .MuiTypography-subtitle2": {
-      opacity: "0.6",
+      opacity: "0.7",
     },
   },
 }));
@@ -33,8 +35,8 @@ const PageHeader = (props) => {
     <Paper elevation={4} className={classes.root}>
       <div className={classes.pageHeader}>
         <div className={classes.pageTitle}>
-          <Typography variant={"h6"} component={"div"}>
-            {title}
+          <Typography variant={"h4"} component={"div"}>
+            <strong> {title}</strong>
           </Typography>
           <Typography variant={"subtitle2"} component={"div"}>
             {description}

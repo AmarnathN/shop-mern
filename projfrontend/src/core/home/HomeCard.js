@@ -26,6 +26,7 @@ import { theme } from "../Theme";
 const useStyles = makeStyles((theme) => ({
   root: {
     margin: theme.spacing(1),
+    transition: "transform 0.15s ease-in-out",
   },
   expand: {
     transform: "rotate(0deg)",
@@ -48,7 +49,6 @@ const HomeCard = (props) => {
   const [addDisabled, setAddDisabled] = useState(false);
   const [removeDisabled, setRemoveDisabled] = useState(true);
   const [addToCartDisabled, setAddToCartDisabled] = useState(true);
-
   const { user, token } = isAuthenticated();
 
   const handleAddItemToCart = async () => {
