@@ -33,7 +33,7 @@ const PopupDialog = (props) => {
         </React.Fragment>
       )}
       <DialogContent>
-        <Paper>{children}</Paper>
+        <MyControls.Paper>{children}</MyControls.Paper>
       </DialogContent>
     </Dialog>
   );

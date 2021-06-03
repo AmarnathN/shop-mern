@@ -59,21 +59,10 @@ export default function Home() {
   };
 
   return (
-    <Base title="Homepage">
+    <Base title="Homepage" description="Please find the products here">
       {loading && ProgressBar()}
       <MyControls.Notification notify={notify} setNotify={setNotify} />
       {!loading && categories.length > 0 && <MyControls.Tabs variant="scrollable" tabsList={getCategoriesTabList()}></MyControls.Tabs>}
-      {/* {!loading && products.length > 0 && (
-        <Grid container>
-          {products.map((product) => {
-            return (
-              <Grid item xs={12} sm={6} md={4} lg={3} xl={2}>
-                <HomeCard product={product} notify={notify} setNotify={setNotify}></HomeCard>
-              </Grid>
-            );
-          })}
-        </Grid>
-      )} */}
     </Base>
   );
 }

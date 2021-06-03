@@ -22,7 +22,9 @@ const SignInOrUp = (props) => {
     <div>
       <MyControls.PopupDialog openPopup={openPopup} handleClosePopup={handleClosePopup}>
         <MyControls.Notification notify={notify} setNotify={setNotify} />
-        <MyControls.Tabs tabsList={tabsList} />
+        <MyControls.Paper>
+          <MyControls.Tabs tabsList={tabsList} />
+        </MyControls.Paper>
       </MyControls.PopupDialog>
     </div>
   );

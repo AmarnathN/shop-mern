@@ -10,7 +10,7 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     marginBotton: theme.spacing(2),
     background: `linear-gradient(190deg,white 75%, ${theme.palette.secondary.main}  95%)`,
-    boxShadow: `0 3px 5px 2px rgba(255, 98, 0, .3)`,
+    boxShadow: `0 3px 5px 2px rgba(255, 98, 0, .2)`,
   },
   pageIcon: {
     display: "inline-block",

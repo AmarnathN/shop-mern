@@ -18,6 +18,7 @@ const useStyles = makeStyles((theme) => ({
     overflow: "auto",
   },
   appBodyChildren: {
+    height: "100%",
     marginTop: theme.spacing(1),
     marginBottom: theme.spacing(1),
   },
