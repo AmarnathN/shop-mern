@@ -15,15 +15,14 @@ import ManageProduct from "./admin/ManageProduct";
 import UpdateProduct from "./admin/UpdateProduct";
 import UpdateCategory from "./admin/UpdateCategory";
 import Checkout from "./core/checkout/Checkout";
+import NotFoundPage from "./core/NotFoundPage";
 
 export default function Routes() {
   return (
     <BrowserRouter>
       <Switch>
         <Route path="/" exact component={Home}></Route>
-        <Route path="/cart" exact component={Cart}></Route>
-        <Route path="/signup" exact component={Signup}></Route>
-        <Route path="/signin" exact component={Signin}></Route>
+        <PrivateRoute path="/cart" exact component={Cart}></PrivateRoute>
         <PrivateRoute path="/checkout/" exact component={Checkout}></PrivateRoute>
         <AdminRoute path="/admin/dashboard" exact component={AdminDashboard}></AdminRoute>
         <PrivateRoute path="/user/dashboard" exact component={UserDashboard}></PrivateRoute>
@@ -33,6 +32,7 @@ export default function Routes() {
         <AdminRoute path="/admin/manage/products" exact component={ManageProduct}></AdminRoute>
         <AdminRoute path="/admin/update/product/:productId" exact component={UpdateProduct}></AdminRoute>
         <AdminRoute path="/admin/update/category/:categoryId" exact component={UpdateCategory}></AdminRoute>
+        <Route path="*" component={NotFoundPage} />
       </Switch>
     </BrowserRouter>
   );

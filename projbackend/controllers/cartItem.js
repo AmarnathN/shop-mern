@@ -21,7 +21,7 @@ exports.getCartItem = (req, res) => {
 
 exports.getAllCartItems = async (req, res) => {
   let limit = req.query.limit == undefined ? DEFAULT_QUERY_PAGE_LIMIT : parseInt(req.query.limit);
-  let sortBy = req.query.sortBy || "updatedAt";
+  let sortBy = req.query.sortBy || "_id";
 
   let user = await User.findOne({ _id: req.jwt_auth._id }).lean().exec();
   CartItem.find({ user: user._id })
@@ -44,7 +44,6 @@ exports.modifyCartItem = async (req, res) => {
   let macthedCartItem = await CartItem.findOne({ product: product, user: user }).exec();
   if (macthedCartItem) {
     req.body.quantity = Number.parseInt(req.body.quantity) + Number.parseInt(macthedCartItem.quantity);
-    console.log(req.body.quantity);
     CartItem.findOneAndUpdate({ product: product, user: user }, { $set: req.body }, { new: true, useFindAndModify: false }, (err, cart) => {
       if (err) {
         return res.status(400).json({ error: "unable to update cart info" });

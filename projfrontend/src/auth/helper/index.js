@@ -1,3 +1,5 @@
+import jwt_decode from "jwt-decode";
+import moment from "moment";
 const { API } = require("../../backend");
 
 export const signup = (user) => {
@@ -59,6 +61,11 @@ export const signout = (next) => {
 
 export const isAuthenticated = () => {
   if (typeof window == "undefined" || !localStorage.getItem("jwt")) {
+    return false;
+  }
+  let token = localStorage.getItem("jwt");
+  var decoded = jwt_decode(token);
+  if (moment.unix(decoded.exp).utc() < moment().utc()) {
     return false;
   }
   return JSON.parse(localStorage.getItem("jwt"));
