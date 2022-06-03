@@ -20,7 +20,11 @@ export default function Home() {
   const { loading, products, categories } = values;
   const preLoad = () => {
     getAllProducts(0).then((productsData) => {
-      if (productsData.error) {
+      if (!productsData){
+        setValues({ ...values, error: "No Products Data", loading: false });
+        setNotify({ isOpen: true, alertMessage: "Error Getting Product data", alertType: "error" });
+      }
+      else if(productsData.error) {
         setValues({ ...values, error: productsData.error, loading: false });
         setNotify({ isOpen: true, alertMessage: productsData.error, alertType: "error" });
       } else {

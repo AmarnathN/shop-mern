@@ -37,7 +37,7 @@ const BaseHeader = (props) => {
   const preLoad = async () => {
     if (isAuthenticated()) {
       await loadCart(token).then((data) => {
-        if (data.error) {
+        if (!data || data.error) {
           return;
         }
         data = data.filter((item) => item.product && item.user);

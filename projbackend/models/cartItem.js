@@ -34,7 +34,10 @@ var cartItemSchema = extendSchema(
 );
 
 cartItemSchema.virtual("total").get(function () {
-  return this.quantity * this.product.price;
+  if(this.quantity && this.product && this.product.price){
+    return this.quantity * this.product.price;
+  }
+  return NaN 
 });
 
 module.exports = mongoose.model("CartItem", cartItemSchema);

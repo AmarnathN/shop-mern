@@ -21,7 +21,10 @@ const ManageProduct = () => {
 
   const preLoad = () => {
     getAllProducts(0).then((data) => {
-      if (data.error) {
+      if (!data){
+        setValues({ ...values,  products: [], isLoading: false, error: "No Products Data" });
+      }
+      else if(data.error) {
         setValues({ ...values, error: data.error });
       } else {
         setValues({ ...values, products: data, isLoading: false });
