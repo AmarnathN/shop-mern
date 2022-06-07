@@ -110,13 +110,13 @@ const BaseHeader = (props) => {
         <div className={classes.sectionDesktop}>
           {isAuthenticated() && (
             <React.Fragment>
-              <MyControls.ActionIconButton color="inherit" onClick={redirectToCart}>
+              <MyControls.ActionIconButton color="inherit" data-testid='cart-icon' onClick={redirectToCart}>
                 <Badge badgeContent={cartItems.length} color="secondary">
                   <ShoppingCartIcon onClick={redirectToCart} />
                 </Badge>
               </MyControls.ActionIconButton>
 
-              <MyControls.ActionIconButton color="inherit" onClick={toggleDrawer}>
+              <MyControls.ActionIconButton color="inherit" data-testid='account-toggle' onClick={toggleDrawer}>
                 <AccountCircle />
               </MyControls.ActionIconButton>
             </React.Fragment>
