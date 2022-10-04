@@ -21,11 +21,11 @@ The deployed Site can be found at
 
 ```https://vayustack.slack.com/archives/D02E2MWS31D/p1654233159372709```
 
-6. Run the following commands to create docker images in repective folders
+6. Run the following commands to create docker images 
 
-``` docker build . -t shop-mern/frontend ```
+``` docker build ./projfrontend -t shop-mern/frontend ```
 
-``` docker build . -t shop-mern/backend ```
+``` docker build ./projbackend -t shop-mern/backend ```
 
 7. Run the following commands to run the containers for the frontend and backend server
 
