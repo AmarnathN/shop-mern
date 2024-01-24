@@ -5,8 +5,8 @@ const setAwsConfig = () => {
   aws.config.setPromisesDependency();
   aws.config.update({
     secretAccessKey: process.env.AWS_ACCESS_SECRET,
-    accessKeyId: process.env.AWS_ACCESS_KEY,
-    region: process.env.REGION,
+    accessKeyId: process.env.MY_AWS_ACCESS_KEY,
+    region: process.env.MY_REGION,
     signatureVersion: "v4",
   });
 };
