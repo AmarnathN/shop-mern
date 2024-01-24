@@ -63,7 +63,7 @@ exports.signout = (req, res) => {
 };
 
 // Custom middle wares
-process.env.publicKEY = fs.readFileSync("./public.key", "utf8");
+// process.env.publicKEY = fs.readFileSync("./public.key", "utf8");
 exports.isSignedIn = expressJwt({
   secret: process.env.publicKEY,
   userProperty: "jwt_auth",
