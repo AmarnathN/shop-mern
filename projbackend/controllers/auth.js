@@ -30,18 +30,20 @@ exports.signin = (req, res) => {
     // token with RSA SHA256 alogorithm
     // ref : https://siddharthac6.medium.com/json-web-token-jwt-the-right-way-of-implementing-with-node-js-65b8915d550e
     // process.env.privateKEY = fs.readFileSync("./private.key", "utf8");
+    const PRIVATE_KEY = Buffer.from(process.env.privateKEY , 'base64').toString('ascii');
     var signOptions = {
       expiresIn: "12h",
       algorithm: "RS256", // RSASSA [ "RS256", "RS384", "RS512" ]
     };
-    const token = jwt.sign({ _id: user._id }, process.env.privateKEY, signOptions);
+    const token = jwt.sign({ _id: user._id }, PRIVATE_KEY, signOptions);
 
     // process.env.publicKEY = fs.readFileSync("./public.key", "utf8");
+    const PUBLIC_KEY = Buffer.from(process.env.publicKEY , 'base64').toString('ascii');
     var verifyOptions = {
       expiresIn: "12h",
       algorithms: ["RS256"],
     };
-    jwt.verify(token, process.env.publicKEY, verifyOptions, function (err, payload) {
+    jwt.verify(token, PUBLIC_KEY, verifyOptions, function (err, payload) {
       console.log(`jwt verify error : ${err}`);
       console.log(`jwt verify payload : ${JSON.stringify(payload)}`);
     });
@@ -64,8 +66,9 @@ exports.signout = (req, res) => {
 
 // Custom middle wares
 // process.env.publicKEY = fs.readFileSync("./public.key", "utf8");
+const PUBLIC_KEY = Buffer.from(process.env.publicKEY , 'base64').toString('ascii');
 exports.isSignedIn = expressJwt({
-  secret: process.env.publicKEY,
+  secret: PUBLIC_KEY,
   userProperty: "jwt_auth",
   algorithms: ["RS256"],
 });
