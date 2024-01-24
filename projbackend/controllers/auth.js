@@ -29,14 +29,14 @@ exports.signin = (req, res) => {
 
     // token with RSA SHA256 alogorithm
     // ref : https://siddharthac6.medium.com/json-web-token-jwt-the-right-way-of-implementing-with-node-js-65b8915d550e
-    process.env.privateKEY = fs.readFileSync("./private.key", "utf8");
+    // process.env.privateKEY = fs.readFileSync("./private.key", "utf8");
     var signOptions = {
       expiresIn: "12h",
       algorithm: "RS256", // RSASSA [ "RS256", "RS384", "RS512" ]
     };
     const token = jwt.sign({ _id: user._id }, process.env.privateKEY, signOptions);
 
-    process.env.publicKEY = fs.readFileSync("./public.key", "utf8");
+    // process.env.publicKEY = fs.readFileSync("./public.key", "utf8");
     var verifyOptions = {
       expiresIn: "12h",
       algorithms: ["RS256"],
