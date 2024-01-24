@@ -14,12 +14,10 @@ import UpdateProduct from "./admin/UpdateProduct";
 import UpdateCategory from "./admin/UpdateCategory";
 import Checkout from "./core/checkout/Checkout";
 import NotFoundPage from "./core/NotFoundPage";
-import { Analytics } from "@vercel/analytics/react";
 
 export default function Routes() {
   return (
     <BrowserRouter>
-      <Analytics />
       <Switch>
         <Route path="/" exact component={Home}></Route>
         <PrivateRoute path="/cart" exact component={Cart}></PrivateRoute>
