@@ -6,7 +6,7 @@ import { useHistory } from "react-router-dom";
 
 const intialFieldValues = {
   email: "a8@test.com",
-  password: "a008@1",
+  password: "",
   error: "",
   didRedirect: false,
 };
