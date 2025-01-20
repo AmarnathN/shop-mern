@@ -63,7 +63,7 @@ export default function Home() {
   };
 
   return (
-    <Base title="Homepage" description="Please find the products here">
+    <Base title="Andhra Potlam" description="Please find our potlams here to order">
       {loading && ProgressBar()}
       <MyControls.Notification notify={notify} setNotify={setNotify} />
       {!loading && categories.length > 0 && <MyControls.Tabs variant="scrollable" tabsList={getCategoriesTabList()}></MyControls.Tabs>}
